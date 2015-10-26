@@ -15,7 +15,7 @@ namespace SmartSync.Engine
             File = file;
         }
 
-        public override void Run()
+        public override void Process()
         {
             File.Parent.DeleteFile(File);
         }

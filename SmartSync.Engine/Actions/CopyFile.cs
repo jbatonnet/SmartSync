@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,24 +10,33 @@ namespace SmartSync.Engine
     public class CopyFileAction : Action
     {
         public File Source { get; private set; }
-        public Directory DestinationParent { get; private set; }
+        public Storage DestinationStorage { get; private set; }
+        public string DestinationPath { get; private set; }
         public string DestinationName { get; private set; }
 
-        public CopyFileAction(File source, Directory destinationParent, string destinationName)
+        public CopyFileAction(File source, Storage destinationStorage, string destinationPath, string destinationName)
         {
             Source = source;
-            DestinationParent = destinationParent;
+            DestinationStorage = destinationStorage;
+            DestinationPath = destinationPath;
             DestinationName = destinationName;
         }
 
-        public override void Run()
+        public override void Process()
         {
-            throw new NotImplementedException();
+            Directory destinationDirectory = DestinationStorage.GetDirectory(DestinationPath);
+            File destination = destinationDirectory.CreateFile(DestinationName);
+
+            using (Stream sourceStream = Source.Open(FileAccess.Read))
+            using (Stream destinationStream = destination.Open(FileAccess.Write))
+                sourceStream.CopyTo(destinationStream);
+
+            destination.Date = Source.Date;
         }
 
         public override string ToString()
         {
-            return "Copy " + Source + " to " + DestinationParent + "/" + DestinationName;
+            return "Copy " + Source + " to " + DestinationPath + "/" + DestinationName;
         }
     }
 }

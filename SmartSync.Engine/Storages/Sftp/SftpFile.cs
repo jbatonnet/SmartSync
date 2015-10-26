@@ -5,15 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Renci.SshNet;
+
 namespace SmartSync.Engine
 {
-    public class BasicFile : File
+    public class SftpFile : File
     {
         public override string Name
         {
             get
             {
-                return fileInfo.Name;
+                return file.Name;
             }
             set
             {
@@ -31,11 +33,11 @@ namespace SmartSync.Engine
         {
             get
             {
-                return fileInfo.LastWriteTime;
+                return file.LastWriteTime;
             }
             set
             {
-                fileInfo.LastWriteTime = value;
+                file.LastWriteTime = value;
             }
         }
         public override uint Hash
@@ -46,27 +48,20 @@ namespace SmartSync.Engine
             }
         }
 
-        private FileInfo fileInfo;
-        private Directory parent;
+        private SftpClient client;
+        private SftpDirectory parent;
+        private Renci.SshNet.Sftp.SftpFile file;
 
-        public BasicFile(FileInfo fileInfo, Directory parent)
+        public SftpFile(SftpClient client, SftpDirectory parent, Renci.SshNet.Sftp.SftpFile file)
         {
-            this.fileInfo = fileInfo;
+            this.client = client;
             this.parent = parent;
+            this.file = file;
         }
 
         public override Stream Open(FileAccess access)
         {
-            FileShare share = FileShare.None;
-
-            switch (access)
-            {
-                case FileAccess.Read: share = FileShare.ReadWrite; break;
-                case FileAccess.Write: share = FileShare.Read; break;
-                case FileAccess.ReadWrite: share = FileShare.Read; break;
-            }
-
-            return fileInfo.Open(FileMode.Open, access, share);
+            return client.Open(file.FullName, FileMode.Open, access);
         }
     }
 }

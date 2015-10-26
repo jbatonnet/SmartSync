@@ -11,15 +11,23 @@ namespace SmartSync.Engine
     {
         static void Main(string[] args)
         {
+            // Test storages
+            Storage basic = new BasicStorage(@"..\..\..\Test");
+            Storage basicLeft = new BasicStorage(@"..\..\..\Test\Left");
+            Storage basicRight = new BasicStorage(@"..\..\..\Test\Right");
+            Storage sftp = new SftpStorage("127.0.0.1", "test", "test", "/home/pi/test");
+            Storage zip = new ZipStorage(basic, "/Zip.zip");
+
+            // Sync configuration
             DiffType diffType = DiffType.Dates;
             SyncType syncType = SyncType.LeftToRight;
 
-            Storage left = new BasicStorage(@"..\..\..\Test\Left");
-            Storage right = new BasicStorage(@"..\..\..\Test\Right");
+            Storage left = basicLeft;
+            Storage right = zip;
 
             string[] exclusions = new string[]
             {
-                "/Excel file.xlsx",
+                //"/Excel file.xlsx",
                 "/Directory/SubDirectory 2"
             };
 
@@ -45,10 +53,10 @@ namespace SmartSync.Engine
 
             // Compute differences
             DirectoryDiff[] directoryDiffs = FullOuterJoin(leftDirectories, rightDirectories, l => l.Path, r => r.Path, (l, r, p) => new DirectoryDiff(l, r))
-                .Where(t => t.Left == null || t.Right == null)
+                .Where(d => d.Left == null || d.Right == null)
                 .ToArray();
             FileDiff[] fileDiffs = FullOuterJoin(leftFiles, rightFiles, l => l, r => r, (l, r, p) => new FileDiff(l, r), keyComparer: new FileComparer(diffType))
-                .Where(t => t.Left == null || t.Left == null)
+                .Where(d => d.Left == null || d.Right == null)
                 .ToArray();
 
             List<Action> actions = new List<Action>();
@@ -61,14 +69,14 @@ namespace SmartSync.Engine
                     if (syncType == SyncType.LeftToRight)
                         actions.Add(new DeleteDirectoryAction(diff.Right));
                     else
-                        actions.Add(new CreateDirectoryAction(left.GetDirectory(diff.Right.Parent.Path), diff.Right.Name));
+                        actions.Add(new CreateDirectoryAction(left, diff.Right.Parent.Path, diff.Right.Name));
                 }
                 else if (diff.Right == null)
                 {
                     if (syncType == SyncType.RightToleft)
                         actions.Add(new DeleteDirectoryAction(diff.Left));
                     else
-                        actions.Add(new CreateDirectoryAction(right.GetDirectory(diff.Left.Parent.Path), diff.Left.Name));
+                        actions.Add(new CreateDirectoryAction(right, diff.Left.Parent.Path, diff.Left.Name));
                 }
             }
 
@@ -77,23 +85,58 @@ namespace SmartSync.Engine
             {
                 if (diff.Left == null)
                 {
-                    if (syncType == SyncType.LeftToRight)
-                        actions.Add(new DeleteFileAction(diff.Right));
-                    else
-                        actions.Add(new CopyFileAction(diff.Right, left.GetDirectory(diff.Right.Parent.Path), diff.Right.Name));
+                    switch (syncType)
+                    {
+                        case SyncType.LeftToRight:
+                            actions.Add(new DeleteFileAction(diff.Right));
+                            break;
+
+                        case SyncType.RightToleft:
+                        case SyncType.Sync:
+                            actions.Add(new CopyFileAction(diff.Right, left, diff.Right.Parent.Path, diff.Right.Name));
+                            break;
+                    }
                 }
                 else if (diff.Right == null)
                 {
-                    if (syncType == SyncType.RightToleft)
-                        actions.Add(new DeleteFileAction(diff.Left));
-                    else
-                        actions.Add(new CopyFileAction(diff.Left, right.GetDirectory(diff.Left.Parent.Path), diff.Left.Name));
+                    switch (syncType)
+                    {
+                        case SyncType.RightToleft:
+                            actions.Add(new DeleteFileAction(diff.Left));
+                            break;
+
+                        case SyncType.LeftToRight:
+                        case SyncType.Sync:
+                            actions.Add(new CopyFileAction(diff.Left, right, diff.Left.Parent.Path, diff.Left.Name));
+                            break;
+                    }
                 }
                 else
                 {
+                    switch (syncType)
+                    {
+                        case SyncType.LeftToRight:
+                            actions.Add(new ReplaceFileAction(diff.Left, diff.Right));
+                            break;
 
+                        case SyncType.RightToleft:
+                            actions.Add(new ReplaceFileAction(diff.Right, diff.Left));
+                            break;
+
+                        case SyncType.Sync:
+                            throw new NotImplementedException();
+                            break;
+                    }
                 }
             }
+
+            // Process actions
+            foreach (Action action in actions)
+                action.Process();
+
+            // Dispose storages
+            left.Dispose();
+            right.Dispose();
         }
 
         public static IEnumerable<Directory> GetSubDirectories(Directory directory, string[] exclusions = null)

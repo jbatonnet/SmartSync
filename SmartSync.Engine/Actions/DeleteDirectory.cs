@@ -15,7 +15,7 @@ namespace SmartSync.Engine
             Directory = directory;
         }
 
-        public override void Run()
+        public override void Process()
         {
             Directory.Parent.DeleteDirectory(Directory);
         }

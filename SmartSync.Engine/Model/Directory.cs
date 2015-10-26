@@ -13,7 +13,7 @@ namespace SmartSync.Engine
         public abstract IEnumerable<Directory> Directories { get; }
         public abstract IEnumerable<File> Files { get; }
 
-        public string Path
+        public virtual string Path
         {
             get
             {
@@ -50,7 +50,14 @@ namespace SmartSync.Engine
 
         public abstract Directory CreateDirectory(string name);
         public abstract void DeleteDirectory(Directory directory);
+
+        public abstract File CreateFile(string name);
         public abstract void DeleteFile(File file);
+
+        public override string ToString()
+        {
+            return Path;
+        }
     }
 
     public class DirectoryDiff

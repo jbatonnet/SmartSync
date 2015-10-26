@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Profile>
+    <Properties>
+        <DiffType>Dates</DiffType>
+        <SyncType>LeftToRight</SyncType>
+        <Exclusions>
+            <Exclusion Path="/Excel file.xlsx" />
+            <Exclusion Path="/Directory/SubDirectory 2" />
+        </Exclusions>
+    </Properties>
+    <Left Type="SmartSync.Engine.BasicStorage">
+        <Path>..\..\..\Test\Left</Path>
+    </Left>
+    <Right Type="SmartSync.Engine.ZipStorage">
+        <Storage Type="SmartSync.Engine.BasicStorage">
+            <Path>..\..\..\Test</Path>
+        </Storage>
+        <Path>/Zip.zip</Path>
+    </Right>
+</Profile>

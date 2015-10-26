@@ -8,6 +8,6 @@ namespace SmartSync.Engine
 {
     public abstract class Action
     {
-        public abstract void Run();
+        public abstract void Process();
     }
 }

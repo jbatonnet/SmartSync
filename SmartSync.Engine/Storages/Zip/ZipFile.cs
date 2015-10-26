@@ -5,15 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Ionic.Zip;
+
 namespace SmartSync.Engine
 {
-    public class BasicFile : File
+    public class ZipFile : File
     {
         public override string Name
         {
             get
             {
-                return fileInfo.Name;
+                string name = "/" + file.FileName;
+                return name.Substring(name.LastIndexOf('/') + 1);
             }
             set
             {
@@ -31,11 +34,11 @@ namespace SmartSync.Engine
         {
             get
             {
-                return fileInfo.LastWriteTime;
+                return file.LastModified;
             }
             set
             {
-                fileInfo.LastWriteTime = value;
+                file.LastModified = value;
             }
         }
         public override uint Hash
@@ -46,27 +49,21 @@ namespace SmartSync.Engine
             }
         }
 
-        private FileInfo fileInfo;
-        private Directory parent;
+        internal Ionic.Zip.ZipFile zip;
+        internal Directory parent;
+        internal ZipEntry file;
 
-        public BasicFile(FileInfo fileInfo, Directory parent)
+        public ZipFile(Ionic.Zip.ZipFile zip, Directory parent, ZipEntry file)
         {
-            this.fileInfo = fileInfo;
+            this.zip = zip;
             this.parent = parent;
+            this.file = file;
         }
 
         public override Stream Open(FileAccess access)
         {
-            FileShare share = FileShare.None;
-
-            switch (access)
-            {
-                case FileAccess.Read: share = FileShare.ReadWrite; break;
-                case FileAccess.Write: share = FileShare.Read; break;
-                case FileAccess.ReadWrite: share = FileShare.Read; break;
-            }
-
-            return fileInfo.Open(FileMode.Open, access, share);
+            //return new MemoryStream();
+            return new ZipStream(zip, file, access);
         }
     }
 }

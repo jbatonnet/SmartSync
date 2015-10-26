@@ -13,7 +13,7 @@ namespace SmartSync.Engine
         {
             get
             {
-                return DirectoryInfo.Name;
+                return directoryInfo.Name;
             }
         }
         public override Directory Parent
@@ -27,7 +27,7 @@ namespace SmartSync.Engine
         {
             get
             {
-                foreach (DirectoryInfo directoryInfo in DirectoryInfo.EnumerateDirectories())
+                foreach (DirectoryInfo directoryInfo in directoryInfo.EnumerateDirectories())
                     yield return new BasicDirectory(directoryInfo, this);
             }
         }
@@ -35,36 +35,35 @@ namespace SmartSync.Engine
         {
             get
             {
-                foreach (FileInfo fileInfo in DirectoryInfo.EnumerateFiles())
+                foreach (FileInfo fileInfo in directoryInfo.EnumerateFiles())
                     yield return new BasicFile(fileInfo, this);
             }
         }
 
-        public DirectoryInfo DirectoryInfo { get; private set; }
-
+        private DirectoryInfo directoryInfo;
         private Directory parent;
 
         public BasicDirectory(DirectoryInfo directoryInfo, Directory parent)
         {
-            DirectoryInfo = directoryInfo;
+            this.directoryInfo = directoryInfo;
             this.parent = parent;
-        }
-
-        public override string ToString()
-        {
-            return Path;
         }
 
         public override Directory CreateDirectory(string name)
         {
-            throw new NotImplementedException();
+            return new BasicDirectory(directoryInfo.CreateSubdirectory(name), this);
         }
-
         public override void DeleteDirectory(Directory directory)
         {
             throw new NotImplementedException();
         }
 
+        public override File CreateFile(string name)
+        {
+            FileInfo fileInfo = new FileInfo(System.IO.Path.Combine(directoryInfo.FullName, name));
+            fileInfo.Create().Close();
+            return new BasicFile(fileInfo, this);
+        }
         public override void DeleteFile(File file)
         {
             throw new NotImplementedException();

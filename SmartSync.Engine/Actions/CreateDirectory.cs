@@ -8,23 +8,26 @@ namespace SmartSync.Engine
 {
     public class CreateDirectoryAction : Action
     {
-        public Directory Parent { get; private set; }
+        public Storage Storage { get; private set; }
+        public string Path { get; private set; }
         public string Name { get; private set; }
 
-        public CreateDirectoryAction(Directory parent, string name)
+        public CreateDirectoryAction(Storage storage, string path, string name)
         {
-            Parent = parent;
+            Storage = storage;
+            Path = path;
             Name = name;
         }
 
-        public override void Run()
+        public override void Process()
         {
-            Parent.CreateDirectory(Name);
+            Directory parent = Storage.GetDirectory(Path);
+            parent.CreateDirectory(Name);
         }
 
         public override string ToString()
         {
-            return "Create directory " + Parent + "/" + Name;
+            return "Create directory " + Path + "/" + Name;
         }
     }
 }

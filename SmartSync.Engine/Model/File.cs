@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,9 +9,9 @@ namespace SmartSync.Engine
 {
     public abstract class File
     {
-        public abstract string Name { get; }
+        public abstract string Name { get; set; }
         public abstract Directory Parent { get; }
-        public abstract DateTime Date { get; }
+        public abstract DateTime Date { get; set; }
         public abstract uint Hash { get; }
 
         public string Path
@@ -24,6 +25,13 @@ namespace SmartSync.Engine
                 else
                     return path + "/" + Name;
             }
+        }
+
+        public abstract Stream Open(FileAccess access);
+
+        public override string ToString()
+        {
+            return Path;
         }
     }
 

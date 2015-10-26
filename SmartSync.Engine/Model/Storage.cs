@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SmartSync.Engine
 {
-    public abstract class Storage
+    public abstract class Storage : IDisposable
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -17,6 +17,8 @@ namespace SmartSync.Engine
         {
             if (path[0] != '/')
                 return null;
+            if (path == "/")
+                return Root;
 
             return Root.GetDirectory(path.Substring(1));
         }
@@ -27,5 +29,7 @@ namespace SmartSync.Engine
 
             return Root.GetFile(path.Substring(1));
         }
+
+        public virtual void Dispose() { }
     }
 }
