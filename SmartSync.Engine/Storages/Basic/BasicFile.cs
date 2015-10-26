@@ -13,7 +13,7 @@ namespace SmartSync.Engine
         {
             get
             {
-                return FileInfo.Name;
+                return fileInfo.Name;
             }
         }
         public override Directory Parent
@@ -23,13 +23,27 @@ namespace SmartSync.Engine
                 return parent;
             }
         }
-        public FileInfo FileInfo { get; private set; }
+        public override DateTime Date
+        {
+            get
+            {
+                return fileInfo.LastWriteTime;
+            }
+        }
+        public override uint Hash
+        {
+            get
+            {
+                return unchecked((uint)Path.GetHashCode());
+            }
+        }
 
+        private FileInfo fileInfo;
         private Directory parent;
 
         public BasicFile(FileInfo fileInfo, Directory parent)
         {
-            FileInfo = fileInfo;
+            this.fileInfo = fileInfo;
             this.parent = parent;
         }
 

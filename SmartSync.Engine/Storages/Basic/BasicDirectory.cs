@@ -54,5 +54,20 @@ namespace SmartSync.Engine
         {
             return Path;
         }
+
+        public override Directory CreateDirectory(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void DeleteDirectory(Directory directory)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void DeleteFile(File file)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
