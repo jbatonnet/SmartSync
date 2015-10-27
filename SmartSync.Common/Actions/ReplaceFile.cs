@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,11 @@ namespace SmartSync.Common
 
         public override void Process()
         {
-            throw new NotImplementedException();
+            using (Stream sourceStream = Source.Open(FileAccess.Read))
+            using (Stream destinationStream = Destination.Open(FileAccess.Write))
+                sourceStream.CopyTo(destinationStream);
+
+            Destination.Date = Source.Date;
         }
 
         public override string ToString()

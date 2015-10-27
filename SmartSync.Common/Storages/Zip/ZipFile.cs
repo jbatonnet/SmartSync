@@ -42,11 +42,18 @@ namespace SmartSync.Common
         {
             get
             {
-                return file.LastModified;
+                return file.ModifiedTime;
             }
             set
             {
-                file.LastModified = value;
+                file.SetEntryTimes(value, value, value);
+            }
+        }
+        public override ulong Size
+        {
+            get
+            {
+                return (ulong)file.UncompressedSize;
             }
         }
         public override uint Hash

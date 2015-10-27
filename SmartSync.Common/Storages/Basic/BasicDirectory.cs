@@ -80,7 +80,8 @@ namespace SmartSync.Common
         }
         public override void DeleteFile(File file)
         {
-            throw new NotImplementedException();
+            FileInfo fileInfo = new FileInfo(System.IO.Path.Combine(directoryInfo.FullName, file.Name));
+            fileInfo.Delete();
         }
     }
 }

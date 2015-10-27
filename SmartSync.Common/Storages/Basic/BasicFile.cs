@@ -46,6 +46,13 @@ namespace SmartSync.Common
                 fileInfo.LastWriteTime = value;
             }
         }
+        public override ulong Size
+        {
+            get
+            {
+                return (ulong)fileInfo.Length;
+            }
+        }
         public override uint Hash
         {
             get

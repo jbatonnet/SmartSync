@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Profile>
     <Properties>
-        <DiffType>Dates</DiffType>
+        <DiffType>Sizes</DiffType>
         <SyncType>LeftToRight</SyncType>
-        <Exclusions>
-            <Exclusion>/Excel file.xlsx</Exclusion>
-            <Exclusion>/Directory/SubDirectory 2</Exclusion>
-        </Exclusions>
     </Properties>
     <Left Type="SmartSync.Common.BasicStorage">
         <Path>..\Test\Left</Path>
     </Left>
-    <Right Type="SmartSync.Common.ZipStorage">
+    <Right Type="SmartSync.Common.TarStorage">
         <Storage Type="SmartSync.Common.BasicStorage">
             <Path>..\Test</Path>
         </Storage>
-        <Path>/Zip.zip</Path>
+        <Path>/Tar.tar</Path>
     </Right>
 </Profile>

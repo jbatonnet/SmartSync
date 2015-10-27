@@ -5,17 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Renci.SshNet;
+using SharpCompress.Archive.Tar;
 
 namespace SmartSync.Common
 {
-    public class SftpFile : File
+    public class TarFile : File
     {
         public override string Name
         {
             get
             {
-                return file.Name;
+                string name = "/" + file.Key;
+                return name.Substring(name.LastIndexOf('/') + 1);
             }
             set
             {
@@ -41,18 +42,18 @@ namespace SmartSync.Common
         {
             get
             {
-                return file.LastWriteTime;
+                return file.LastModifiedTime.GetValueOrDefault();
             }
             set
             {
-                file.LastWriteTime = value;
+                throw new NotImplementedException();
             }
         }
         public override ulong Size
         {
             get
             {
-                return (ulong)file.Length;
+                return (ulong)file.Size;
             }
         }
         public override uint Hash
@@ -63,11 +64,11 @@ namespace SmartSync.Common
             }
         }
 
-        private SftpStorage storage;
-        private SftpDirectory parent;
-        private Renci.SshNet.Sftp.SftpFile file;
+        internal TarStorage storage;
+        internal Directory parent;
+        internal TarArchiveEntry file;
 
-        public SftpFile(SftpStorage storage, SftpDirectory parent, Renci.SshNet.Sftp.SftpFile file)
+        public TarFile(TarStorage storage, Directory parent, TarArchiveEntry file)
         {
             this.storage = storage;
             this.parent = parent;
@@ -76,7 +77,7 @@ namespace SmartSync.Common
 
         public override Stream Open(FileAccess access)
         {
-            return storage.Client.Open(file.FullName, FileMode.Open, access);
+            throw new NotImplementedException();
         }
     }
 }

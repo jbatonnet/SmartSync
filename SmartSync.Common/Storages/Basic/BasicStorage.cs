@@ -9,18 +9,17 @@ namespace SmartSync.Common
 {
     public class BasicStorage : Storage
     {
-        public string Path { get; set; }
+        public DirectoryInfo Path { get; set; }
         public override Directory Root
         {
             get
             {
-                DirectoryInfo directoryInfo = new DirectoryInfo(Path);
-                return new BasicDirectory(this, null, directoryInfo);
+                return new BasicDirectory(this, null, Path);
             }
         }
 
         public BasicStorage() { }
-        public BasicStorage(string path)
+        public BasicStorage(DirectoryInfo path)
         {
             Path = path;
         }

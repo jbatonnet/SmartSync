@@ -13,26 +13,28 @@ namespace SmartSync.Engine
 {
     class Program
     {
-        static void Main(string[] args)
+        public static Dictionary<string, string> Parameters { get; private set; }
+
+        public static void Main(string[] args)
         {
-            Dictionary<string, string> parameters = Environment.GetCommandLineArgs()
-                                                               .Where(p => p.StartsWith("/"))
-                                                               .Select(p => p.TrimStart('/'))
-                                                               .Select(p => new { Parameter = p.Trim(), Separator = p.Trim().IndexOf(':') })
-                                                               .ToDictionary(p => p.Separator == -1 ? p.Parameter : p.Parameter.Substring(0, p.Separator).ToLower(), p => p.Separator == -1 ? null : p.Parameter.Substring(p.Separator + 1));
+            Parameters = Environment.GetCommandLineArgs()
+                                    .Where(p => p.StartsWith("/"))
+                                    .Select(p => p.TrimStart('/'))
+                                    .Select(p => new { Parameter = p.Trim(), Separator = p.Trim().IndexOf(':') })
+                                    .ToDictionary(p => p.Separator == -1 ? p.Parameter : p.Parameter.Substring(0, p.Separator).ToLower(), p => p.Separator == -1 ? null : p.Parameter.Substring(p.Separator + 1));
 
             string profilePath = Environment.GetCommandLineArgs().Skip(1).LastOrDefault();
             if (profilePath == null)
             {
                 Log.Error("You must specify a profile to run");
-                return;
+                Exit();
             }
 
             FileInfo profileInfo = new FileInfo(profilePath);
             if (!profileInfo.Exists)
             {
                 Log.Error("Could not find the specified profile");
-                return;
+                Exit();
             }
 
             Profile profile = null;
@@ -52,7 +54,7 @@ namespace SmartSync.Engine
             if (profile == null)
             {
                 Log.Error("Could not load the specified profile");
-                return;
+                Exit();
             }
 
             // Compute differences and actions
@@ -74,13 +76,19 @@ namespace SmartSync.Engine
             profile.Dispose();
 
             Log.Info("Everything is in sync. {0} actions processed.", actions.Length);
+            Exit();
+        }
 
-            if (parameters.ContainsKey("pause"))
+        public static void Exit()
+        {
+            if (Parameters.ContainsKey("pause"))
             {
                 Console.WriteLine();
-                Console.WriteLine("Press a key to exit");
+                Console.Write("Press any key to exit...");
                 Console.ReadKey(true);
             }
+
+            Environment.Exit(0);
         }
     }
 }

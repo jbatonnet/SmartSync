@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Ionic.Zip;
+using Ionic.Zlib;
 
 namespace SmartSync.Common
 {
@@ -13,6 +14,7 @@ namespace SmartSync.Common
     {
         public Storage Storage { get; set; }
         public string Path { get; set; }
+        //public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Default;
 
         public override Directory Root
         {
@@ -44,6 +46,9 @@ namespace SmartSync.Common
             zipFile = Storage.GetFile(Path);
             zipStream = zipFile.Open(FileAccess.Read);
             Zip = Ionic.Zip.ZipFile.Read(zipStream);
+
+            //Zip.CompressionMethod = CompressionMethod.Deflate;
+            //Zip.CompressionLevel = CompressionLevel;
 
             root = new ZipRoot(this);
         }

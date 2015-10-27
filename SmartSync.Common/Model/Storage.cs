@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +14,12 @@ namespace SmartSync.Common
             Bootstrap.Initialize();
         }
 
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
         public string Name { get; set; }
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
         public string Description { get; set; }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public abstract Directory Root { get; }
 
         public virtual Directory GetDirectory(string path)

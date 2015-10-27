@@ -10,6 +10,7 @@ namespace SmartSync.Common
     public abstract class File : Entry
     {
         public abstract DateTime Date { get; set; }
+        public abstract ulong Size { get; }
         public abstract uint Hash { get; }
 
         public string Path
@@ -47,6 +48,11 @@ namespace SmartSync.Common
             if (left.Path != right.Path)
                 return false;
 
+            if (DiffType == DiffType.Paths)
+                return true;
+
+            if (DiffType == DiffType.Sizes && left.Size != right.Size)
+                return false;
             if (DiffType == DiffType.Dates && left.Date != right.Date)
                 return false;
             if (DiffType == DiffType.Hashes && left.Hash != right.Hash)
@@ -57,12 +63,21 @@ namespace SmartSync.Common
 
         public int GetHashCode(File file)
         {
-            if (DiffType == DiffType.Dates)
-                return file.Date.GetHashCode();
-            if (DiffType == DiffType.Hashes)
-                return unchecked((int)file.Hash);
+            return GetFileKey(file, DiffType).GetHashCode();
+        }
 
-            return file.Path.GetHashCode();
+        public static object GetFileKey(File file, DiffType diffType)
+        {
+            if (diffType == DiffType.Paths)
+                return file.Path;
+            if (diffType == DiffType.Sizes)
+                return file.Size;
+            if (diffType == DiffType.Dates)
+                return file.Date;
+            if (diffType == DiffType.Hashes)
+                return file.Hash;
+
+            return file.Path;
         }
     }
 

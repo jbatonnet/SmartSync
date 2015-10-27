@@ -9,6 +9,8 @@ namespace SmartSync.Common
 {
     public enum DiffType
     {
+        Paths,
+        Sizes,
         Dates,
         Hashes
     }
@@ -67,8 +69,9 @@ namespace SmartSync.Common
                                                 .ToArray();
 
             // Compute file differences
-            IEnumerable<FileDiff> fileDiffs = FullOuterJoin(leftFiles, rightFiles, l => l, r => r, (l, r, p) => new FileDiff(Left, l, Right, r), keyComparer: new FileComparer(DiffType))
-                                                  .Where(d => d.Left == null || d.Right == null);
+            FileComparer diffComparer = new FileComparer(DiffType);
+            IEnumerable<FileDiff> fileDiffs = FullOuterJoin(leftFiles, rightFiles, l => l, r => r, (l, r, p) => new FileDiff(Left, l, Right, r), keyComparer: new FileComparer(DiffType.Paths))
+                                                  .Where(d => d.Left == null || d.Right == null || !diffComparer.Equals(d.Left, d.Right));
             foreach (FileDiff fileDiff in fileDiffs)
                 yield return fileDiff;
         }
@@ -106,16 +109,6 @@ namespace SmartSync.Common
             pattern = pattern.Replace("*", @"[^\\/]+");
 
             return Regex.IsMatch(path, pattern);
-        }
-        protected static object GetFileKey(File file, DiffType type)
-        {
-            switch (type)
-            {
-                case DiffType.Dates: return file.Date;
-                case DiffType.Hashes: return file.Hash;
-            }
-
-            return null;
         }
         protected static IEnumerable<TResult> FullOuterJoin<TLeft, TRight, TKey, TResult>(IEnumerable<TLeft> left, IEnumerable<TRight> right, Func<TLeft, TKey> leftKeySelector, Func<TRight, TKey> rightKeySelector, Func<TLeft, TRight, TKey, TResult> projection, TLeft leftDefault = default(TLeft), TRight rightDefault = default(TRight), IEqualityComparer<TKey> keyComparer = null)
         {
