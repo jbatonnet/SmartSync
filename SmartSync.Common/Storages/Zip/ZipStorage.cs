@@ -4,9 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Ionic.Zip;
 
-namespace SmartSync.Engine
+namespace SmartSync.Common
 {
     public class ZipStorage : Storage
     {
@@ -22,9 +23,10 @@ namespace SmartSync.Engine
             }
         }
 
+        internal Ionic.Zip.ZipFile Zip { get; private set; }
+
         private File zipFile;
         private Stream zipStream;
-        private Ionic.Zip.ZipFile zip;
         private ZipRoot root;
 
         public ZipStorage() { }
@@ -41,9 +43,9 @@ namespace SmartSync.Engine
 
             zipFile = Storage.GetFile(Path);
             zipStream = zipFile.Open(FileAccess.Read);
-            zip = Ionic.Zip.ZipFile.Read(zipStream);
+            Zip = Ionic.Zip.ZipFile.Read(zipStream);
 
-            root = new ZipRoot(zip);
+            root = new ZipRoot(this);
         }
 
         public override void Dispose()
@@ -51,7 +53,7 @@ namespace SmartSync.Engine
             Initialize();
 
             using (Stream stream = zipFile.Open(FileAccess.Write))
-                zip.Save(stream);
+                Zip.Save(stream);
         }
     }
 }

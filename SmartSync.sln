@@ -3,7 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.Engine", "SmartSync.Engine\SmartSync.Engine.csproj", "{66FC3CA1-E596-4C66-A8EA-46169662B0EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.Common", "SmartSync.Common\SmartSync.Common.csproj", "{66FC3CA1-E596-4C66-A8EA-46169662B0EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.Engine", "SmartSync.Engine\SmartSync.Engine.csproj", "{EC954B34-0715-4CEB-9730-B949A820A13A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E874FC5C-685B-4504-8991-043EE3DC37FD}"
+	ProjectSection(SolutionItems) = preProject
+		Test\Basic.xsync = Test\Basic.xsync
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +22,10 @@ Global
 		{66FC3CA1-E596-4C66-A8EA-46169662B0EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66FC3CA1-E596-4C66-A8EA-46169662B0EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66FC3CA1-E596-4C66-A8EA-46169662B0EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC954B34-0715-4CEB-9730-B949A820A13A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC954B34-0715-4CEB-9730-B949A820A13A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC954B34-0715-4CEB-9730-B949A820A13A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC954B34-0715-4CEB-9730-B949A820A13A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

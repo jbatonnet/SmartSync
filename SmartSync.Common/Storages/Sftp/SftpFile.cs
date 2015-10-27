@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Renci.SshNet;
 
-namespace SmartSync.Engine
+namespace SmartSync.Common
 {
     public class SftpFile : File
     {
@@ -29,6 +29,14 @@ namespace SmartSync.Engine
                 return parent;
             }
         }
+        public override Storage Storage
+        {
+            get
+            {
+                return storage;
+            }
+        }
+
         public override DateTime Date
         {
             get
@@ -48,20 +56,20 @@ namespace SmartSync.Engine
             }
         }
 
-        private SftpClient client;
+        private SftpStorage storage;
         private SftpDirectory parent;
         private Renci.SshNet.Sftp.SftpFile file;
 
-        public SftpFile(SftpClient client, SftpDirectory parent, Renci.SshNet.Sftp.SftpFile file)
+        public SftpFile(SftpStorage storage, SftpDirectory parent, Renci.SshNet.Sftp.SftpFile file)
         {
-            this.client = client;
+            this.storage = storage;
             this.parent = parent;
             this.file = file;
         }
 
         public override Stream Open(FileAccess access)
         {
-            return client.Open(file.FullName, FileMode.Open, access);
+            return storage.Client.Open(file.FullName, FileMode.Open, access);
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartSync.Engine
+namespace SmartSync.Common
 {
     public class BasicDirectory : Directory
     {
@@ -15,6 +15,10 @@ namespace SmartSync.Engine
             {
                 return directoryInfo.Name;
             }
+            set
+            {
+                throw new NotImplementedException();
+            }
         }
         public override Directory Parent
         {
@@ -23,12 +27,20 @@ namespace SmartSync.Engine
                 return parent;
             }
         }
+        public override Storage Storage
+        {
+            get
+            {
+                return storage;
+            }
+        }
+
         public override IEnumerable<Directory> Directories
         {
             get
             {
                 foreach (DirectoryInfo directoryInfo in directoryInfo.EnumerateDirectories())
-                    yield return new BasicDirectory(directoryInfo, this);
+                    yield return new BasicDirectory(storage, this, directoryInfo);
             }
         }
         public override IEnumerable<File> Files
@@ -36,22 +48,24 @@ namespace SmartSync.Engine
             get
             {
                 foreach (FileInfo fileInfo in directoryInfo.EnumerateFiles())
-                    yield return new BasicFile(fileInfo, this);
+                    yield return new BasicFile(storage, this, fileInfo);
             }
         }
 
+        private BasicStorage storage;
+        private BasicDirectory parent;
         private DirectoryInfo directoryInfo;
-        private Directory parent;
 
-        public BasicDirectory(DirectoryInfo directoryInfo, Directory parent)
+        public BasicDirectory(BasicStorage storage, BasicDirectory parent, DirectoryInfo directoryInfo)
         {
-            this.directoryInfo = directoryInfo;
+            this.storage = storage;
             this.parent = parent;
+            this.directoryInfo = directoryInfo;
         }
 
         public override Directory CreateDirectory(string name)
         {
-            return new BasicDirectory(directoryInfo.CreateSubdirectory(name), this);
+            return new BasicDirectory(storage, this, directoryInfo.CreateSubdirectory(name));
         }
         public override void DeleteDirectory(Directory directory)
         {
@@ -62,7 +76,7 @@ namespace SmartSync.Engine
         {
             FileInfo fileInfo = new FileInfo(System.IO.Path.Combine(directoryInfo.FullName, name));
             fileInfo.Create().Close();
-            return new BasicFile(fileInfo, this);
+            return new BasicFile(storage, this, fileInfo);
         }
         public override void DeleteFile(File file)
         {

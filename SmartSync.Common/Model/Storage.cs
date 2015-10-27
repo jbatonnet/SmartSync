@@ -4,10 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartSync.Engine
+namespace SmartSync.Common
 {
     public abstract class Storage : IDisposable
     {
+        static Storage()
+        {
+            Bootstrap.Initialize();
+        }
+
         public string Name { get; set; }
         public string Description { get; set; }
 

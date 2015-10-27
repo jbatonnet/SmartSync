@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Renci.SshNet;
 
-namespace SmartSync.Engine
+namespace SmartSync.Common
 {
     public class SftpStorage : Storage
     {
@@ -22,11 +22,11 @@ namespace SmartSync.Engine
             get
             {
                 Initialize();
-                return new SftpDirectory(client, null, client.Get(Path));
+                return new SftpDirectory(this, null, Client.Get(Path));
             }
         }
 
-        private SftpClient client;
+        internal SftpClient Client { get; private set; }
 
         public SftpStorage() { }
         public SftpStorage(string host, string user, string password, string path = "/")
@@ -47,11 +47,11 @@ namespace SmartSync.Engine
 
         public void Initialize()
         {
-            if (client != null)
+            if (Client != null)
                 return;
 
-            client = new SftpClient(Host, Port, User, Password);
-            client.Connect();
+            Client = new SftpClient(Host, Port, User, Password);
+            Client.Connect();
         }
     }
 }

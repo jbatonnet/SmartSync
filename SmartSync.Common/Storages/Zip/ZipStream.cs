@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Ionic.Zip;
 
-namespace SmartSync.Engine
+namespace SmartSync.Common
 {
     public class ZipStream : Stream
     {

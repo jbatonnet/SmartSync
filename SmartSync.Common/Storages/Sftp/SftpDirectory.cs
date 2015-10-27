@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Renci.SshNet;
 
-namespace SmartSync.Engine
+namespace SmartSync.Common
 {
     public class SftpDirectory : Directory
     {
@@ -16,6 +16,10 @@ namespace SmartSync.Engine
             {
                 return directory.Name;
             }
+            set
+            {
+                throw new NotImplementedException();
+            }
         }
         public override Directory Parent
         {
@@ -24,17 +28,25 @@ namespace SmartSync.Engine
                 return parent;
             }
         }
+        public override Storage Storage
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public override IEnumerable<Directory> Directories
         {
             get
             {
-                foreach (Renci.SshNet.Sftp.SftpFile file in client.ListDirectory(directory.FullName))
+                foreach (Renci.SshNet.Sftp.SftpFile file in storage.Client.ListDirectory(directory.FullName))
                 {
                     if (file.Name == "." || file.Name == "..")
                         continue;
 
                     if (file.Attributes.IsDirectory)
-                        yield return new SftpDirectory(client, this, file);
+                        yield return new SftpDirectory(storage, this, file);
                 }
             }
         }
@@ -42,26 +54,26 @@ namespace SmartSync.Engine
         {
             get
             {
-                foreach (Renci.SshNet.Sftp.SftpFile file in client.ListDirectory(directory.FullName))
+                foreach (Renci.SshNet.Sftp.SftpFile file in storage.Client.ListDirectory(directory.FullName))
                     if (file.Attributes.IsRegularFile)
-                        yield return new SftpFile(client, this, file);
+                        yield return new SftpFile(storage, this, file);
             }
         }
 
-        private SftpClient client;
-        private SftpDirectory parent;
-        private Renci.SshNet.Sftp.SftpFile directory;
+        internal SftpStorage storage;
+        internal SftpDirectory parent;
+        internal Renci.SshNet.Sftp.SftpFile directory;
 
-        public SftpDirectory(SftpClient client, SftpDirectory parent, Renci.SshNet.Sftp.SftpFile directory)
+        public SftpDirectory(SftpStorage storage, SftpDirectory parent, Renci.SshNet.Sftp.SftpFile directory)
         {
-            this.client = client;
+            this.storage = storage;
             this.parent = parent;
             this.directory = directory;
         }
 
         public override Directory CreateDirectory(string name)
         {
-            client.CreateDirectory(directory.FullName + "/" + name);
+            storage.Client.CreateDirectory(directory.FullName + "/" + name);
             return GetDirectory(name);
         }
         public override void DeleteDirectory(Directory directory)
@@ -71,7 +83,7 @@ namespace SmartSync.Engine
 
         public override File CreateFile(string name)
         {
-            client.Create(directory.FullName + "/" + name);
+            storage.Client.Create(directory.FullName + "/" + name);
             return GetFile(name);
         }
         public override void DeleteFile(File file)

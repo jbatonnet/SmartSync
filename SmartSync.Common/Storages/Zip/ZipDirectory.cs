@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Ionic.Zip;
 
-namespace SmartSync.Engine
+namespace SmartSync.Common
 {
     public class ZipDirectory : Directory
     {
@@ -16,6 +16,10 @@ namespace SmartSync.Engine
             {
                 string name = "/" + directory.FileName.TrimEnd('/');
                 return name.Substring(name.LastIndexOf('/') + 1);
+            }
+            set
+            {
+                throw new NotImplementedException();
             }
         }
         public override string Path
@@ -32,11 +36,19 @@ namespace SmartSync.Engine
                 return parent;
             }
         }
+        public override Storage Storage
+        {
+            get
+            {
+                return storage;
+            }
+        }
+
         public override IEnumerable<Directory> Directories
         {
             get
             {
-                foreach (ZipEntry entry in zip.EntriesSorted)
+                foreach (ZipEntry entry in storage.Zip.EntriesSorted)
                 {
                     if (!entry.IsDirectory)
                         continue;
@@ -49,7 +61,7 @@ namespace SmartSync.Engine
                     if (name.Contains('/'))
                         continue;
 
-                    yield return new ZipDirectory(zip, this, entry);
+                    yield return new ZipDirectory(storage, this, entry);
                 }
             }
         }
@@ -57,7 +69,7 @@ namespace SmartSync.Engine
         {
             get
             {
-                foreach (ZipEntry entry in zip.EntriesSorted)
+                foreach (ZipEntry entry in storage.Zip.EntriesSorted)
                 {
                     if (entry.IsDirectory)
                         continue;
@@ -68,42 +80,42 @@ namespace SmartSync.Engine
                     if (name.Contains('/'))
                         continue;
 
-                    yield return new ZipFile(zip, this, entry);
+                    yield return new ZipFile(storage, this, entry);
                 }
             }
         }
 
-        internal Ionic.Zip.ZipFile zip;
+        internal ZipStorage storage;
         internal Directory parent;
         internal ZipEntry directory;
 
-        public ZipDirectory(Ionic.Zip.ZipFile zip, Directory parent, ZipEntry directory)
+        public ZipDirectory(ZipStorage storage, Directory parent, ZipEntry directory)
         {
-            this.zip = zip;
+            this.storage = storage;
             this.parent = parent;
             this.directory = directory;
         }
 
         public override Directory CreateDirectory(string name)
         {
-            ZipEntry entry = zip.AddDirectoryByName(directory.FileName + name);
-            return new ZipDirectory(zip, this, entry);
+            ZipEntry entry = storage.Zip.AddDirectoryByName(directory.FileName + name);
+            return new ZipDirectory(storage, this, entry);
         }
         public override void DeleteDirectory(Directory directory)
         {
             ZipDirectory zipDirectory = directory as ZipDirectory;
-            zip.RemoveEntry(zipDirectory.directory);
+            storage.Zip.RemoveEntry(zipDirectory.directory);
         }
 
         public override File CreateFile(string name)
         {
-            ZipEntry entry = zip.AddEntry(directory.FileName + name, new byte[0]);
-            return new ZipFile(zip, this, entry);
+            ZipEntry entry = storage.Zip.AddEntry(directory.FileName + name, new byte[0]);
+            return new ZipFile(storage, this, entry);
         }
         public override void DeleteFile(File file)
         {
             ZipFile zipFile = file as ZipFile;
-            zip.RemoveEntry(zipFile.file);
+            storage.Zip.RemoveEntry(zipFile.file);
         }
     }
 }

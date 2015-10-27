@@ -4,16 +4,16 @@
         <DiffType>Dates</DiffType>
         <SyncType>LeftToRight</SyncType>
         <Exclusions>
-            <Exclusion Path="/Excel file.xlsx" />
-            <Exclusion Path="/Directory/SubDirectory 2" />
+            <Exclusion>/Excel file.xlsx</Exclusion>
+            <Exclusion>/Directory/SubDirectory 2</Exclusion>
         </Exclusions>
     </Properties>
-    <Left Type="SmartSync.Engine.BasicStorage">
-        <Path>..\..\..\Test\Left</Path>
+    <Left Type="SmartSync.Common.BasicStorage">
+        <Path>..\Test\Left</Path>
     </Left>
-    <Right Type="SmartSync.Engine.ZipStorage">
-        <Storage Type="SmartSync.Engine.BasicStorage">
-            <Path>..\..\..\Test</Path>
+    <Right Type="SmartSync.Common.ZipStorage">
+        <Storage Type="SmartSync.Common.BasicStorage">
+            <Path>..\Test</Path>
         </Storage>
         <Path>/Zip.zip</Path>
     </Right>

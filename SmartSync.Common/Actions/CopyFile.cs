@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartSync.Engine
+namespace SmartSync.Common
 {
     public class CopyFileAction : Action
     {
@@ -36,7 +36,8 @@ namespace SmartSync.Engine
 
         public override string ToString()
         {
-            return "Copy " + Source + " to " + DestinationPath + "/" + DestinationName;
+            string destinationPath = DestinationPath != "/" ? DestinationPath : "";
+            return "Copy " + Source + " to " + destinationPath + "/" + DestinationName;
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartSync.Engine
+namespace SmartSync.Common
 {
     public class BasicFile : File
     {
@@ -27,6 +27,14 @@ namespace SmartSync.Engine
                 return parent;
             }
         }
+        public override Storage Storage
+        {
+            get
+            {
+                return storage;
+            }
+        }
+
         public override DateTime Date
         {
             get
@@ -46,13 +54,15 @@ namespace SmartSync.Engine
             }
         }
 
+        private BasicStorage storage;
+        private BasicDirectory parent;
         private FileInfo fileInfo;
-        private Directory parent;
 
-        public BasicFile(FileInfo fileInfo, Directory parent)
+        public BasicFile(BasicStorage storage, BasicDirectory parent, FileInfo fileInfo)
         {
-            this.fileInfo = fileInfo;
+            this.storage = storage;
             this.parent = parent;
+            this.fileInfo = fileInfo;
         }
 
         public override Stream Open(FileAccess access)

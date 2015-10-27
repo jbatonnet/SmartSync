@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Ionic.Zip;
 
-namespace SmartSync.Engine
+namespace SmartSync.Common
 {
     public class ZipRoot : Directory
     {
@@ -16,6 +16,10 @@ namespace SmartSync.Engine
             {
                 return "<Root>";
             }
+            set
+            {
+                throw new NotSupportedException();
+            }
         }
         public override Directory Parent
         {
@@ -24,11 +28,19 @@ namespace SmartSync.Engine
                 return null;
             }
         }
+        public override Storage Storage
+        {
+            get
+            {
+                return storage;
+            }
+        }
+
         public override IEnumerable<Directory> Directories
         {
             get
             {
-                foreach (ZipEntry entry in zip.EntriesSorted)
+                foreach (ZipEntry entry in storage.Zip.EntriesSorted)
                 {
                     if (!entry.IsDirectory)
                         continue;
@@ -37,7 +49,7 @@ namespace SmartSync.Engine
                     if (name.Contains('/'))
                         continue;
                     
-                    yield return new ZipDirectory(zip, this, entry);
+                    yield return new ZipDirectory(storage, this, entry);
                 }
             }
         }
@@ -45,23 +57,23 @@ namespace SmartSync.Engine
         {
             get
             {
-                foreach (ZipEntry entry in zip.EntriesSorted)
+                foreach (ZipEntry entry in storage.Zip.EntriesSorted)
                 {
                     if (entry.IsDirectory)
                         continue;
                     if (entry.FileName.Contains('/'))
                         continue;
 
-                    yield return new ZipFile(zip, this, entry);
+                    yield return new ZipFile(storage, this, entry);
                 }
             }
         }
 
-        private Ionic.Zip.ZipFile zip;
+        private ZipStorage storage;
 
-        public ZipRoot(Ionic.Zip.ZipFile zip)
+        public ZipRoot(ZipStorage storage)
         {
-            this.zip = zip;
+            this.storage = storage;
         }
 
         private void Initialize()
@@ -70,24 +82,24 @@ namespace SmartSync.Engine
 
         public override Directory CreateDirectory(string name)
         {
-            ZipEntry entry = zip.AddDirectoryByName(name);
-            return new ZipDirectory(zip, this, entry);
+            ZipEntry entry = storage.Zip.AddDirectoryByName(name);
+            return new ZipDirectory(storage, this, entry);
         }
         public override void DeleteDirectory(Directory directory)
         {
             ZipDirectory zipDirectory = directory as ZipDirectory;
-            zip.RemoveEntry(zipDirectory.directory);
+            storage.Zip.RemoveEntry(zipDirectory.directory);
         }
 
         public override File CreateFile(string name)
         {
-            ZipEntry entry = zip.AddEntry(name, new byte[0]);
-            return new ZipFile(zip, this, entry);
+            ZipEntry entry = storage.Zip.AddEntry(name, new byte[0]);
+            return new ZipFile(storage, this, entry);
         }
         public override void DeleteFile(File file)
         {
             ZipFile zipFile = file as ZipFile;
-            zip.RemoveEntry(zipFile.file);
+            storage.Zip.RemoveEntry(zipFile.file);
         }
     }
 }

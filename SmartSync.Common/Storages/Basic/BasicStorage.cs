@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartSync.Engine
+namespace SmartSync.Common
 {
     public class BasicStorage : Storage
     {
@@ -15,7 +15,7 @@ namespace SmartSync.Engine
             get
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(Path);
-                return new BasicDirectory(directoryInfo, null);
+                return new BasicDirectory(this, null, directoryInfo);
             }
         }
 

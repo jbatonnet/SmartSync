@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Ionic.Zip;
 
-namespace SmartSync.Engine
+namespace SmartSync.Common
 {
     public class ZipFile : File
     {
@@ -30,6 +30,14 @@ namespace SmartSync.Engine
                 return parent;
             }
         }
+        public override Storage Storage
+        {
+            get
+            {
+                return storage;
+            }
+        }
+
         public override DateTime Date
         {
             get
@@ -49,13 +57,13 @@ namespace SmartSync.Engine
             }
         }
 
-        internal Ionic.Zip.ZipFile zip;
+        internal ZipStorage storage;
         internal Directory parent;
         internal ZipEntry file;
 
-        public ZipFile(Ionic.Zip.ZipFile zip, Directory parent, ZipEntry file)
+        public ZipFile(ZipStorage storage, Directory parent, ZipEntry file)
         {
-            this.zip = zip;
+            this.storage = storage;
             this.parent = parent;
             this.file = file;
         }
@@ -63,7 +71,7 @@ namespace SmartSync.Engine
         public override Stream Open(FileAccess access)
         {
             //return new MemoryStream();
-            return new ZipStream(zip, file, access);
+            return new ZipStream(storage.Zip, file, access);
         }
     }
 }
