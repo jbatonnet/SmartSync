@@ -43,10 +43,6 @@
       <HintPath>..\packages\SSH.NET.2013.4.7\lib\net40\Renci.SshNet.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="SharpCompress, Version=0.10.3.0, Culture=neutral, PublicKeyToken=beaf6f427e128133, processorArchitecture=MSIL">
-      <HintPath>..\packages\sharpcompress.0.11.1\lib\net40\SharpCompress.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -79,10 +75,6 @@
     <Compile Include="Storages\Sftp\SftpFile.cs" />
     <Compile Include="Storages\Sftp\SftpDirectory.cs" />
     <Compile Include="Storages\Sftp\SftpStorage.cs" />
-    <Compile Include="Storages\Tar\TarStorage.cs" />
-    <Compile Include="Storages\Tar\TarRoot.cs" />
-    <Compile Include="Storages\Tar\TarDirectory.cs" />
-    <Compile Include="Storages\Tar\TarFile.cs" />
     <Compile Include="Storages\Zip\ZipStream.cs" />
     <Compile Include="Storages\Zip\ZipFile.cs" />
     <Compile Include="Storages\Zip\ZipDirectory.cs" />
