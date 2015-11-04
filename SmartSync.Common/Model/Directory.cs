@@ -10,23 +10,7 @@ namespace SmartSync.Common
     {
         public abstract IEnumerable<Directory> Directories { get; }
         public abstract IEnumerable<File> Files { get; }
-
-        public virtual string Path
-        {
-            get
-            {
-                if (Parent == null)
-                    return "/";
-
-                string path = Parent.Path;
-
-                if (path == "/")
-                    return "/" + Name;
-                else
-                    return path + "/" + Name;
-            }
-        }
-
+        
         public virtual Directory GetDirectory(string path)
         {
             int separator = path.IndexOf('/');

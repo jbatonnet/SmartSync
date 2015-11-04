@@ -12,20 +12,7 @@ namespace SmartSync.Common
         public abstract DateTime Date { get; set; }
         public abstract ulong Size { get; }
         public abstract uint Hash { get; }
-
-        public string Path
-        {
-            get
-            {
-                string path = Parent.Path;
-
-                if (path == "/")
-                    return "/" + Name;
-                else
-                    return path + "/" + Name;
-            }
-        }
-
+        
         public abstract Stream Open(FileAccess access);
 
         public override string ToString()
@@ -53,7 +40,7 @@ namespace SmartSync.Common
 
             if (DiffType == DiffType.Sizes && left.Size != right.Size)
                 return false;
-            if (DiffType == DiffType.Dates && left.Date != right.Date)
+            if (DiffType == DiffType.Dates && Math.Abs((left.Date - right.Date).TotalSeconds) >= 2) // FIXME: What an ugly way to do this
                 return false;
             if (DiffType == DiffType.Hashes && left.Hash != right.Hash)
                 return false;

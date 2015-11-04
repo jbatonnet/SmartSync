@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Ionic.Zip;
 
 namespace SmartSync.Common
 {
@@ -14,7 +13,7 @@ namespace SmartSync.Common
         {
             get
             {
-                string name = "/" + directory.FileName.TrimEnd('/');
+                string name = "/" + directory.FullName.TrimEnd('/');
                 return name.Substring(name.LastIndexOf('/') + 1);
             }
             set
@@ -26,7 +25,7 @@ namespace SmartSync.Common
         {
             get
             {
-                return "/" + directory.FileName.TrimEnd('/');
+                return "/" + directory.FullName.TrimEnd('/');
             }
         }
         public override Directory Parent
@@ -48,16 +47,16 @@ namespace SmartSync.Common
         {
             get
             {
-                foreach (ZipEntry entry in storage.Zip.EntriesSorted)
+                foreach (ZipArchiveEntry entry in storage.Archive.Entries)
                 {
-                    if (!entry.IsDirectory)
+                    if (!entry.FullName.EndsWith("/"))
                         continue;
-                    if (entry.FileName == directory.FileName)
+                    if (!entry.FullName.StartsWith(directory.FullName))
                         continue;
-                    if (!entry.FileName.StartsWith(directory.FileName))
+                    if (entry.FullName == directory.FullName)
                         continue;
 
-                    string name = entry.FileName.Substring(directory.FileName.Length).TrimEnd('/');
+                    string name = entry.FullName.Substring(directory.FullName.Length).TrimEnd('/');
                     if (name.Contains('/'))
                         continue;
 
@@ -69,14 +68,14 @@ namespace SmartSync.Common
         {
             get
             {
-                foreach (ZipEntry entry in storage.Zip.EntriesSorted)
+                foreach (ZipArchiveEntry entry in storage.Archive.Entries)
                 {
-                    if (entry.IsDirectory)
+                    if (entry.FullName.EndsWith("/"))
                         continue;
-                    if (!entry.FileName.StartsWith(directory.FileName))
+                    if (!entry.FullName.StartsWith(directory.FullName))
                         continue;
 
-                    string name = entry.FileName.Substring(directory.FileName.Length);
+                    string name = entry.FullName.Substring(directory.FullName.Length);
                     if (name.Contains('/'))
                         continue;
 
@@ -87,9 +86,9 @@ namespace SmartSync.Common
 
         internal ZipStorage storage;
         internal Directory parent;
-        internal ZipEntry directory;
+        internal ZipArchiveEntry directory;
 
-        public ZipDirectory(ZipStorage storage, Directory parent, ZipEntry directory)
+        public ZipDirectory(ZipStorage storage, Directory parent, ZipArchiveEntry directory)
         {
             this.storage = storage;
             this.parent = parent;
@@ -98,24 +97,24 @@ namespace SmartSync.Common
 
         public override Directory CreateDirectory(string name)
         {
-            ZipEntry entry = storage.Zip.AddDirectoryByName(directory.FileName + name);
+            ZipArchiveEntry entry = storage.Archive.CreateEntry(directory.FullName + name + "/");
             return new ZipDirectory(storage, this, entry);
         }
         public override void DeleteDirectory(Directory directory)
         {
             ZipDirectory zipDirectory = directory as ZipDirectory;
-            storage.Zip.RemoveEntry(zipDirectory.directory);
+            zipDirectory.directory.Delete();
         }
 
         public override File CreateFile(string name)
         {
-            ZipEntry entry = storage.Zip.AddEntry(directory.FileName + name, new byte[0]);
+            ZipArchiveEntry entry = storage.Archive.CreateEntry(directory.FullName + name, storage.Compression);
             return new ZipFile(storage, this, entry);
         }
         public override void DeleteFile(File file)
         {
             ZipFile zipFile = file as ZipFile;
-            storage.Zip.RemoveEntry(zipFile.file);
+            zipFile.file.Delete();
         }
     }
 }

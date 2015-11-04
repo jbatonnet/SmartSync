@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Ionic.Zip;
 
 namespace SmartSync.Common
 {
@@ -40,12 +39,12 @@ namespace SmartSync.Common
         {
             get
             {
-                foreach (ZipEntry entry in storage.Zip.EntriesSorted)
+                foreach (ZipArchiveEntry entry in storage.Archive.Entries)
                 {
-                    if (!entry.IsDirectory)
+                    if (!entry.FullName.EndsWith("/"))
                         continue;
 
-                    string name = entry.FileName.TrimEnd('/');
+                    string name = entry.FullName.TrimEnd('/');
                     if (name.Contains('/'))
                         continue;
                     
@@ -57,11 +56,9 @@ namespace SmartSync.Common
         {
             get
             {
-                foreach (ZipEntry entry in storage.Zip.EntriesSorted)
+                foreach (ZipArchiveEntry entry in storage.Archive.Entries)
                 {
-                    if (entry.IsDirectory)
-                        continue;
-                    if (entry.FileName.Contains('/'))
+                    if (entry.FullName.Contains('/'))
                         continue;
 
                     yield return new ZipFile(storage, this, entry);
@@ -80,26 +77,32 @@ namespace SmartSync.Common
         {
         }
 
+        public override Directory GetDirectory(string path)
+        {
+            ZipArchiveEntry entry = storage.Archive.GetEntry(path.TrimEnd('/') + "/");
+            return new ZipDirectory(storage, null, entry);
+        }
+
         public override Directory CreateDirectory(string name)
         {
-            ZipEntry entry = storage.Zip.AddDirectoryByName(name);
+            ZipArchiveEntry entry = storage.Archive.CreateEntry(name + "/");
             return new ZipDirectory(storage, this, entry);
         }
         public override void DeleteDirectory(Directory directory)
         {
             ZipDirectory zipDirectory = directory as ZipDirectory;
-            storage.Zip.RemoveEntry(zipDirectory.directory);
+            zipDirectory.directory.Delete();
         }
 
         public override File CreateFile(string name)
         {
-            ZipEntry entry = storage.Zip.AddEntry(name, new byte[0]);
+            ZipArchiveEntry entry = storage.Archive.CreateEntry(name, storage.Compression);
             return new ZipFile(storage, this, entry);
         }
         public override void DeleteFile(File file)
         {
             ZipFile zipFile = file as ZipFile;
-            storage.Zip.RemoveEntry(zipFile.file);
+            zipFile.file.Delete();
         }
     }
 }

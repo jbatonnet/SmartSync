@@ -7,10 +7,10 @@
     <Left Type="SmartSync.Common.BasicStorage">
         <Path>..\Test\Left</Path>
     </Left>
-    <Right Type="SmartSync.Common.TarStorage">
+    <Right Type="SmartSync.Common.ZipStorage">
         <Storage Type="SmartSync.Common.BasicStorage">
             <Path>..\Test</Path>
         </Storage>
-        <Path>/Tar.tar</Path>
+        <Path>/Zip.zip</Path>
     </Right>
 </Profile>

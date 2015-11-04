@@ -45,7 +45,11 @@ namespace SmartSync.Common
             }
             set
             {
-                file.LastWriteTime = value;
+                Renci.SshNet.Sftp.SftpFileAttributes attributes = storage.Client.GetAttributes(file.FullName);
+
+                attributes.LastWriteTime = value;
+
+                storage.Client.SetAttributes(file.FullName, attributes);
             }
         }
         public override ulong Size

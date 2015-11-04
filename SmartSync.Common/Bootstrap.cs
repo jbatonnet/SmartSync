@@ -14,8 +14,7 @@ namespace SmartSync.Common
         {
             string[] assemblyNames = new[]
             {
-                "SmartSync.Common.Extern.Renci.SshNet.dll",
-                "SmartSync.Common.Extern.Ionic.Zip.dll"
+                "SmartSync.Common.Extern.Renci.SshNet.dll"
             };
 
             foreach (string assemblyName in assemblyNames)

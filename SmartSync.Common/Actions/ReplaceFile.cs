@@ -29,7 +29,7 @@ namespace SmartSync.Common
 
         public override string ToString()
         {
-            return "Replace file " + Destination + " by " + Source;
+            return "Replace file " + Destination;
         }
     }
 }

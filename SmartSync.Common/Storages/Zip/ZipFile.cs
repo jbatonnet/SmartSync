@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Ionic.Zip;
 
 namespace SmartSync.Common
 {
@@ -15,7 +14,7 @@ namespace SmartSync.Common
         {
             get
             {
-                string name = "/" + file.FileName;
+                string name = "/" + file.FullName;
                 return name.Substring(name.LastIndexOf('/') + 1);
             }
             set
@@ -42,18 +41,18 @@ namespace SmartSync.Common
         {
             get
             {
-                return file.ModifiedTime;
+                return file.LastWriteTime.DateTime;
             }
             set
             {
-                file.SetEntryTimes(value, value, value);
+                file.LastWriteTime = new DateTimeOffset(value);
             }
         }
         public override ulong Size
         {
             get
             {
-                return (ulong)file.UncompressedSize;
+                return (ulong)file.Length;
             }
         }
         public override uint Hash
@@ -66,9 +65,9 @@ namespace SmartSync.Common
 
         internal ZipStorage storage;
         internal Directory parent;
-        internal ZipEntry file;
+        internal ZipArchiveEntry file;
 
-        public ZipFile(ZipStorage storage, Directory parent, ZipEntry file)
+        public ZipFile(ZipStorage storage, Directory parent, ZipArchiveEntry file)
         {
             this.storage = storage;
             this.parent = parent;
@@ -77,8 +76,7 @@ namespace SmartSync.Common
 
         public override Stream Open(FileAccess access)
         {
-            //return new MemoryStream();
-            return new ZipStream(storage.Zip, file, access);
+            return file.Open();
         }
     }
 }

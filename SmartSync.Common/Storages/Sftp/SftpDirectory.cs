@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -73,22 +74,48 @@ namespace SmartSync.Common
 
         public override Directory CreateDirectory(string name)
         {
-            storage.Client.CreateDirectory(directory.FullName + "/" + name);
-            return GetDirectory(name);
+            if (!Storage.IsNameValid(name))
+                throw new ArgumentException("The specified name contains invalid characters");
+
+            string path = directory.FullName + "/" + name;
+            storage.Client.CreateDirectory(path);
+
+            Renci.SshNet.Sftp.SftpFile result = storage.Client.Get(path);
+            if (result == null)
+                throw new IOException("Unable to create the specified directory");
+
+            return new SftpDirectory(storage, this, result);
         }
         public override void DeleteDirectory(Directory directory)
         {
-            throw new NotImplementedException();
+            if (!directory.Parent.Equals(this))
+                throw new ArgumentException("The specified directory could not be found");
+
+            string path = this.directory.FullName + "/" + directory.Name;
+            storage.Client.DeleteDirectory(path);
         }
 
         public override File CreateFile(string name)
         {
-            storage.Client.Create(directory.FullName + "/" + name);
-            return GetFile(name);
+            if (!Storage.IsNameValid(name))
+                throw new ArgumentException("The specified name contains invalid characters");
+
+            string path = directory.FullName + "/" + name;
+            storage.Client.Create(path).Close();
+
+            Renci.SshNet.Sftp.SftpFile result = storage.Client.Get(path);
+            if (result == null)
+                throw new IOException("Unable to create the specified file");
+
+            return new SftpFile(storage, this, result);
         }
         public override void DeleteFile(File file)
         {
-            throw new NotImplementedException();
+            if (!file.Parent.Equals(this))
+                throw new ArgumentException("The specified directory could not be found");
+
+            string path = directory.FullName + "/" + file.Name;
+            storage.Client.DeleteFile(path);
         }
     }
 }

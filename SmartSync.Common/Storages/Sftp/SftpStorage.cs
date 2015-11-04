@@ -53,5 +53,10 @@ namespace SmartSync.Common
             Client = new SftpClient(Host, Port, User, Password);
             Client.Connect();
         }
+
+        public override string ToString()
+        {
+            return string.Format("SftpStorage {{ Host: {0}, Port: {1} }}", Host, Port);
+        }
     }
 }

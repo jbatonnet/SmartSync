@@ -35,16 +35,13 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ionic.Zip, Version=1.9.6.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetZip.1.9.6\lib\net20\Ionic.Zip.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Renci.SshNet, Version=2013.4.7.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SSH.NET.2013.4.7\lib\net40\Renci.SshNet.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -75,9 +72,8 @@
     <Compile Include="Storages\Sftp\SftpFile.cs" />
     <Compile Include="Storages\Sftp\SftpDirectory.cs" />
     <Compile Include="Storages\Sftp\SftpStorage.cs" />
-    <Compile Include="Storages\Zip\ZipStream.cs" />
-    <Compile Include="Storages\Zip\ZipFile.cs" />
     <Compile Include="Storages\Zip\ZipDirectory.cs" />
+    <Compile Include="Storages\Zip\ZipFile.cs" />
     <Compile Include="Storages\Zip\ZipRoot.cs" />
     <Compile Include="Storages\Zip\ZipStorage.cs" />
   </ItemGroup>
@@ -86,9 +82,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\packages\DotNetZip.1.9.6\lib\net20\Ionic.Zip.dll">
-      <Link>Extern\Ionic.Zip.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\packages\SSH.NET.2013.4.7\lib\net40\Renci.SshNet.dll">
       <Link>Extern\Renci.SshNet.dll</Link>
     </EmbeddedResource>

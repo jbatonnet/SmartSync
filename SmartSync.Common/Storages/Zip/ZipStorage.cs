@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Ionic.Zip;
-using Ionic.Zlib;
 
 namespace SmartSync.Common
 {
@@ -14,7 +12,7 @@ namespace SmartSync.Common
     {
         public Storage Storage { get; set; }
         public string Path { get; set; }
-        //public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Default;
+        public CompressionLevel Compression { get; set; } = CompressionLevel.Fastest;
 
         public override Directory Root
         {
@@ -25,7 +23,7 @@ namespace SmartSync.Common
             }
         }
 
-        internal Ionic.Zip.ZipFile Zip { get; private set; }
+        internal ZipArchive Archive { get; private set; }
 
         private File zipFile;
         private Stream zipStream;
@@ -44,11 +42,8 @@ namespace SmartSync.Common
                 return;
 
             zipFile = Storage.GetFile(Path);
-            zipStream = zipFile.Open(FileAccess.Read);
-            Zip = Ionic.Zip.ZipFile.Read(zipStream);
-
-            //Zip.CompressionMethod = CompressionMethod.Deflate;
-            //Zip.CompressionLevel = CompressionLevel;
+            zipStream = zipFile.Open(FileAccess.ReadWrite);
+            Archive = new ZipArchive(zipStream, ZipArchiveMode.Update);
 
             root = new ZipRoot(this);
         }
@@ -56,9 +51,7 @@ namespace SmartSync.Common
         public override void Dispose()
         {
             Initialize();
-
-            using (Stream stream = zipFile.Open(FileAccess.Write))
-                Zip.Save(stream);
+            Archive.Dispose();
         }
     }
 }

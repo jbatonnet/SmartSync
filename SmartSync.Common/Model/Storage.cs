@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SmartSync.Common
@@ -40,5 +41,17 @@ namespace SmartSync.Common
         }
 
         public virtual void Dispose() { }
+
+        public static bool IsPathValid(string path)
+        {
+            if (path.Contains("//"))
+                return false;
+
+            return Regex.IsMatch(path, @"[a-zA-Z0-9_\-\.#$~ \/]+");
+        }
+        public static bool IsNameValid(string name)
+        {
+            return Regex.IsMatch(name, @"[a-zA-Z0-9_\-\.#$~ ]+");
+        }
     }
 }

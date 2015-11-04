@@ -23,5 +23,10 @@ namespace SmartSync.Common
         {
             Path = path;
         }
+
+        public override string ToString()
+        {
+            return string.Format("BasicStorage {{ Path: {0} }}", Path.FullName);
+        }
     }
 }

@@ -37,7 +37,7 @@ namespace SmartSync.Common
         public override string ToString()
         {
             string destinationPath = DestinationPath != "/" ? DestinationPath : "";
-            return "Copy " + Source + " to " + destinationPath + "/" + DestinationName;
+            return "Copy " + destinationPath + "/" + DestinationName;
         }
     }
 }
