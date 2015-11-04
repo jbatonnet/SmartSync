@@ -47,40 +47,70 @@ namespace SmartSync.Common
         {
             get
             {
-                foreach (ZipArchiveEntry entry in storage.Archive.Entries)
+                string directoryFullName = directory.FullName;
+
+                Func<ZipArchiveEntry, bool> filter = e =>
                 {
-                    if (!entry.FullName.EndsWith("/"))
-                        continue;
-                    if (!entry.FullName.StartsWith(directory.FullName))
-                        continue;
-                    if (entry.FullName == directory.FullName)
-                        continue;
+                    string entryFullName = e.FullName;
 
-                    string name = entry.FullName.Substring(directory.FullName.Length).TrimEnd('/');
-                    if (name.Contains('/'))
-                        continue;
+                    // Skip files
+                    if (entryFullName[entryFullName.Length - 1] != '/')
+                        return false;
 
-                    yield return new ZipDirectory(storage, this, entry);
-                }
+                    // Skip non subdirectories
+                    if (entryFullName.Length <= directoryFullName.Length)
+                        return false;
+
+                    for (int i = directoryFullName.Length - 1; i >= 0; i--)
+                        if (entryFullName[i] != directoryFullName[i])
+                            return false;
+
+                    // Skip non direct children
+                    for (int i = directoryFullName.Length; i < entryFullName.Length - 1; i++)
+                        if (entryFullName[i] == '/')
+                            return false;
+
+                    return true;
+                };
+
+                return storage.Archive.Entries.AsParallel()
+                                              .Where(filter)
+                                              .Select(e => new ZipDirectory(storage, this, e));
             }
         }
         public override IEnumerable<File> Files
         {
             get
             {
-                foreach (ZipArchiveEntry entry in storage.Archive.Entries)
+                string directoryFullName = directory.FullName;
+
+                Func<ZipArchiveEntry, bool> filter = e =>
                 {
-                    if (entry.FullName.EndsWith("/"))
-                        continue;
-                    if (!entry.FullName.StartsWith(directory.FullName))
-                        continue;
+                    string entryFullName = e.FullName;
 
-                    string name = entry.FullName.Substring(directory.FullName.Length);
-                    if (name.Contains('/'))
-                        continue;
+                    // Skip directories
+                    if (entryFullName[entryFullName.Length - 1] == '/')
+                        return false;
 
-                    yield return new ZipFile(storage, this, entry);
-                }
+                    // Skip non subdirectories
+                    if (e.FullName.Length <= directoryFullName.Length)
+                        return false;
+
+                    for (int i = directoryFullName.Length - 1; i >= 0; i--)
+                        if (e.FullName[i] != directoryFullName[i])
+                            return false;
+
+                    // Skip non direct children
+                    for (int i = directoryFullName.Length; i < e.FullName.Length - 1; i++)
+                        if (e.FullName[i] == '/')
+                            return false;
+
+                    return true;
+                };
+
+                return storage.Archive.Entries.AsParallel()
+                                              .Where(filter)
+                                              .Select(e => new ZipFile(storage, this, e));
             }
         }
 

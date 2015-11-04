@@ -39,30 +39,50 @@ namespace SmartSync.Common
         {
             get
             {
-                foreach (ZipArchiveEntry entry in storage.Archive.Entries)
+                Func<ZipArchiveEntry, bool> filter = e =>
                 {
-                    if (!entry.FullName.EndsWith("/"))
-                        continue;
+                    string entryFullName = e.FullName;
 
-                    string name = entry.FullName.TrimEnd('/');
-                    if (name.Contains('/'))
-                        continue;
-                    
-                    yield return new ZipDirectory(storage, this, entry);
-                }
+                    // Skip files
+                    if (entryFullName[entryFullName.Length - 1] != '/')
+                        return false;
+
+                    // Skip non direct children
+                    for (int i = 0; i < entryFullName.Length - 1; i++)
+                        if (entryFullName[i] == '/')
+                            return false;
+
+                    return true;
+                };
+
+                return storage.Archive.Entries.AsParallel()
+                                              .Where(filter)
+                                              .Select(e => new ZipDirectory(storage, this, e));
             }
         }
         public override IEnumerable<File> Files
         {
             get
             {
-                foreach (ZipArchiveEntry entry in storage.Archive.Entries)
+                Func<ZipArchiveEntry, bool> filter = e =>
                 {
-                    if (entry.FullName.Contains('/'))
-                        continue;
+                    string entryFullName = e.FullName;
 
-                    yield return new ZipFile(storage, this, entry);
-                }
+                    // Skip directories
+                    if (entryFullName[entryFullName.Length - 1] == '/')
+                        return false;
+
+                    // Skip non direct children
+                    for (int i = 0; i < entryFullName.Length - 1; i++)
+                        if (entryFullName[i] == '/')
+                            return false;
+
+                    return true;
+                };
+
+                return storage.Archive.Entries.AsParallel()
+                                              .Where(filter)
+                                              .Select(e => new ZipFile(storage, this, e));
             }
         }
 

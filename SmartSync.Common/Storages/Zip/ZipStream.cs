@@ -9,8 +9,13 @@ namespace SmartSync.Common
 {
     public class ZipStream : Stream
     {
+        private static long totalBytesToFlush = 0;
+        private const long autoflushThreshold = 100 * 1024 * 1024;
+
         private ZipStorage storage;
         private Stream stream;
+
+        private long bytesToFlush = 0;
 
         public ZipStream(ZipStorage storage, Stream stream)
         {
@@ -73,17 +78,25 @@ namespace SmartSync.Common
         }
         public override void SetLength(long value)
         {
+            bytesToFlush += Math.Abs(Length - value);
             stream.SetLength(value);
         }
         public override void Write(byte[] buffer, int offset, int count)
         {
             stream.Write(buffer, offset, count);
+            bytesToFlush += count;
         }
 
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
-            storage.Flush();
+            stream.Dispose();
+
+            totalBytesToFlush += bytesToFlush;
+            if (totalBytesToFlush > autoflushThreshold)
+            {
+                storage.Flush();
+                totalBytesToFlush = 0;
+            }
         }
     }
 }
