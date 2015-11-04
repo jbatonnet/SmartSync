@@ -56,7 +56,7 @@ namespace SmartSync.Common
 
         public override string ToString()
         {
-            return string.Format("SftpStorage {{ Host: {0}, Port: {1} }}", Host, Port);
+            return string.Format("Sftp {{ Host: {0}, Port: {1} }}", Host, Port);
         }
     }
 }

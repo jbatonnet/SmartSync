@@ -112,7 +112,7 @@ namespace SmartSync.Common
         public override void DeleteFile(File file)
         {
             if (!file.Parent.Equals(this))
-                throw new ArgumentException("The specified directory could not be found");
+                throw new ArgumentException("The specified file could not be found");
 
             string path = directory.FullName + "/" + file.Name;
             storage.Client.DeleteFile(path);

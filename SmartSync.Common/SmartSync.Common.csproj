@@ -76,6 +76,7 @@
     <Compile Include="Storages\Zip\ZipFile.cs" />
     <Compile Include="Storages\Zip\ZipRoot.cs" />
     <Compile Include="Storages\Zip\ZipStorage.cs" />
+    <Compile Include="Storages\Zip\ZipStream.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

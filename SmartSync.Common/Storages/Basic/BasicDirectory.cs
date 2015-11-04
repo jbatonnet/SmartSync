@@ -65,23 +65,36 @@ namespace SmartSync.Common
 
         public override Directory CreateDirectory(string name)
         {
+            if (!Storage.IsNameValid(name))
+                throw new ArgumentException("The specified name contains invalid characters");
+
             return new BasicDirectory(storage, this, directoryInfo.CreateSubdirectory(name));
         }
         public override void DeleteDirectory(Directory directory)
         {
-            throw new NotImplementedException();
+            if (!directory.Parent.Equals(this))
+                throw new ArgumentException("The specified directory could not be found");
+
+            BasicDirectory basicDirectory = directory as BasicDirectory;
+            basicDirectory.directoryInfo.Delete(true);
         }
 
         public override File CreateFile(string name)
         {
+            if (!Storage.IsNameValid(name))
+                throw new ArgumentException("The specified name contains invalid characters");
+
             FileInfo fileInfo = new FileInfo(System.IO.Path.Combine(directoryInfo.FullName, name));
             fileInfo.Create().Close();
             return new BasicFile(storage, this, fileInfo);
         }
         public override void DeleteFile(File file)
         {
-            FileInfo fileInfo = new FileInfo(System.IO.Path.Combine(directoryInfo.FullName, file.Name));
-            fileInfo.Delete();
+            if (!file.Parent.Equals(this))
+                throw new ArgumentException("The specified file could not be found");
+
+            BasicFile basicFile = file as BasicFile;
+            basicFile.fileInfo.Delete();
         }
     }
 }

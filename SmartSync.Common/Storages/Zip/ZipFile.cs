@@ -45,6 +45,7 @@ namespace SmartSync.Common
             }
             set
             {
+                Update();
                 file.LastWriteTime = new DateTimeOffset(value);
             }
         }
@@ -76,7 +77,12 @@ namespace SmartSync.Common
 
         public override Stream Open(FileAccess access)
         {
-            return file.Open();
+            Update();
+            return new ZipStream(storage, file.Open());
+        }
+        private void Update()
+        {
+            file = storage.Archive.GetEntry(file.FullName);
         }
     }
 }

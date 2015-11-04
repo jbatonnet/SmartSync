@@ -42,16 +42,35 @@ namespace SmartSync.Common
                 return;
 
             zipFile = Storage.GetFile(Path);
+            if (zipFile == null)
+            {
+                int separator = Path.LastIndexOf('/');
+                Directory directory = Storage.GetDirectory(Path.Substring(0, separator + 1));
+                zipFile = directory.CreateFile(Path.Substring(separator + 1));
+            }
+
+            Flush();
+        }
+
+        internal void Flush()
+        {
+            if (Archive != null)
+                Archive.Dispose();
+
             zipStream = zipFile.Open(FileAccess.ReadWrite);
             Archive = new ZipArchive(zipStream, ZipArchiveMode.Update);
-
             root = new ZipRoot(this);
         }
 
         public override void Dispose()
         {
-            Initialize();
-            Archive.Dispose();
+            if (Archive != null)
+                Archive.Dispose();
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Zip {{ Storage: {0}, Path: {1} }}", Storage, Path);
         }
     }
 }
