@@ -27,7 +27,7 @@ namespace SmartSync.Common
 
         public override string ToString()
         {
-            return "Create directory " + Path + "/" + Name;
+            return "Create directory " + Path.TrimEnd('/') + "/" + Name;
         }
     }
 }

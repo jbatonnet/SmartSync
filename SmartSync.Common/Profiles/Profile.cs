@@ -43,15 +43,9 @@ namespace SmartSync.Common
         {
             string[] exclusions = Exclusions.ToArray();
 
-            // Left directories
-            Directory leftRoot = Left.Root;
-            List<Directory> leftDirectories = new List<Directory>() { leftRoot };
-            leftDirectories.AddRange(GetSubDirectories(leftRoot, exclusions));
-            
-            // Right directories
-            Directory rightRoot = Right.Root;
-            List<Directory> rightDirectories = new List<Directory>() { rightRoot };
-            rightDirectories.AddRange(GetSubDirectories(rightRoot, exclusions));
+            // Directories
+            Directory[] leftDirectories = Left.GetAllDirectories(exclusions).ToArray();
+            Directory[] rightDirectories = Right.GetAllDirectories(exclusions).ToArray();
 
             // Compute directory differences
             IEnumerable<DirectoryDiff> directoryDiffs = FullOuterJoin(leftDirectories, rightDirectories, l => l.Path, r => r.Path, (l, r, p) => new DirectoryDiff(Left, l, Right, r))

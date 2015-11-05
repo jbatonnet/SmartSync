@@ -40,6 +40,25 @@ namespace SmartSync.Common
             return Root.GetFile(path.Substring(1));
         }
 
+        public virtual IEnumerable<Directory> GetAllDirectories(string[] exclusions = null)
+        {
+            yield return Root;
+
+            foreach (Directory directory in GetSubDirectories(Root, exclusions))
+                yield return directory;
+        }
+        public virtual IEnumerable<File> GetAllFiles(string[] exclusions = null)
+        {
+            foreach (Directory directory in GetAllDirectories(exclusions))
+                foreach (File file in directory.Files)
+                {
+                    if (exclusions != null && exclusions.Any(e => MatchPattern(file.Path, e)))
+                        continue;
+
+                    yield return file;
+                }
+        }
+
         public virtual void Dispose() { }
 
         public static bool IsPathValid(string path)
@@ -52,6 +71,35 @@ namespace SmartSync.Common
         public static bool IsNameValid(string name)
         {
             return Regex.IsMatch(name, @"[a-zA-Z0-9_\-\.#$~ ]+");
+        }
+
+        protected static IEnumerable<Directory> GetSubDirectories(Directory directory, string[] exclusions = null)
+        {
+            foreach (Directory subDirectory in directory.Directories)
+            {
+                if (exclusions != null && exclusions.Any(e => MatchPattern(subDirectory.Path, e)))
+                    continue;
+
+                yield return subDirectory;
+
+                foreach (Directory subSubDirectory in GetSubDirectories(subDirectory, exclusions))
+                    yield return subSubDirectory;
+            }
+        }
+        protected static bool MatchPattern(string path, string pattern)
+        {
+            if (path == pattern)
+                return true;
+
+            // Escape characters
+            pattern = pattern.Replace(@"\", @"\\");
+            pattern = pattern.Replace(".", @"\.");
+
+            // Replace tokens
+            pattern = pattern.Replace("**", ".+");
+            pattern = pattern.Replace("*", @"[^\\/]+");
+
+            return Regex.IsMatch(path, pattern);
         }
     }
 }

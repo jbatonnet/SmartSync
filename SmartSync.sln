@@ -9,8 +9,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.Engine", "SmartSy
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E874FC5C-685B-4504-8991-043EE3DC37FD}"
 	ProjectSection(SolutionItems) = preProject
-		Test\Basic.xsync = Test\Basic.xsync
+		Samples\Basic.xsync = Samples\Basic.xsync
+		Samples\GoogleDrive.xsync = Samples\GoogleDrive.xsync
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{20D060A3-9F49-4ECD-96DC-6E05CD186420}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.OneDrive", "SmartSync.OneDrive\SmartSync.OneDrive.csproj", "{60DFB0D8-FAB1-44BE-B5E0-027182B172D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.GoogleDrive", "SmartSync.GoogleDrive\SmartSync.GoogleDrive.csproj", "{BDD48D2C-E69A-4F60-89B6-23CAB63F69A5}"
 EndProject
 Global
 	GlobalSection(Performance) = preSolution
@@ -29,8 +36,20 @@ Global
 		{EC954B34-0715-4CEB-9730-B949A820A13A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC954B34-0715-4CEB-9730-B949A820A13A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC954B34-0715-4CEB-9730-B949A820A13A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60DFB0D8-FAB1-44BE-B5E0-027182B172D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60DFB0D8-FAB1-44BE-B5E0-027182B172D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60DFB0D8-FAB1-44BE-B5E0-027182B172D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60DFB0D8-FAB1-44BE-B5E0-027182B172D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDD48D2C-E69A-4F60-89B6-23CAB63F69A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDD48D2C-E69A-4F60-89B6-23CAB63F69A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDD48D2C-E69A-4F60-89B6-23CAB63F69A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDD48D2C-E69A-4F60-89B6-23CAB63F69A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{60DFB0D8-FAB1-44BE-B5E0-027182B172D5} = {20D060A3-9F49-4ECD-96DC-6E05CD186420}
+		{BDD48D2C-E69A-4F60-89B6-23CAB63F69A5} = {20D060A3-9F49-4ECD-96DC-6E05CD186420}
 	EndGlobalSection
 EndGlobal

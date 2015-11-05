@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -60,12 +61,41 @@ namespace SmartSync.Common
         {
             XProfile profile = new XProfile();
 
-            // Decode properties
             XElement propertiesElement = document.Root.Element("Properties");
-            XElement diffTypeElement = propertiesElement.Element("DiffType");
-            XElement syncTypeElement = propertiesElement.Element("SyncType");
-            XElement exclusionsElement = propertiesElement.Element("Exclusions");
+            XElement diffTypeElement = propertiesElement?.Element("DiffType");
+            XElement syncTypeElement = propertiesElement?.Element("SyncType");
+            XElement exclusionsElement = propertiesElement?.Element("Exclusions");
+            XElement referencesElement = propertiesElement?.Element("References");
 
+            // Load references
+            XElement[] referenceElements = referencesElement?.Elements()?.ToArray();
+            if (referenceElements != null)
+            {
+                foreach (XElement referenceElement in referenceElements)
+                {
+                    switch (referenceElement.Name.LocalName)
+                    {
+                        case "Assembly":
+                            string file = referenceElement.Attribute("Path").Value;
+                            string path = file;
+
+                            if (!Path.IsPathRooted(path))
+                                path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), path);
+
+                            try
+                            {
+                                Assembly assembly = Assembly.LoadFile(path);
+                            }
+                            catch
+                            {
+                                throw new Exception("Could not find referenced assembly " + file);
+                            }
+                            break;
+                    }
+                }
+            }
+
+            // Decode properties
             DiffType diffType;
             if (diffTypeElement != null && Enum.TryParse(diffTypeElement.Value, out diffType))
                 profile.diffType = diffType;
