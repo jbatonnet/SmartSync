@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using SmartSync.Common;
+
 using Renci.SshNet;
 
-namespace SmartSync.Common
+namespace SmartSync.Sftp
 {
     public class SftpStorage : Storage
     {

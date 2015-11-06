@@ -83,11 +83,6 @@ namespace SmartSync.GoogleDrive
 
     public class GoogleDriveStorage : Storage
     {
-        static GoogleDriveStorage()
-        {
-            Bootstrap.Initialize();
-        }
-
         private static string ApplicationName = "SmartSync";
         private static string[] Scopes = { DriveService.Scope.Drive };
 

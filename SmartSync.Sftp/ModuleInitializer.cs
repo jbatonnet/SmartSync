@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SmartSync.GoogleDrive
+namespace SmartSync.Sftp
 {
-    internal static class Bootstrap
+    internal static class ModuleInitializer
     {
-        private const string resourcePrefix = "SmartSync.GoogleDrive.External";
+        private const string resourcePrefix = "SmartSync.Sftp.Extern";
         private static string[] assemblyNames =
         {
-            "Google.Apis.dll",
-            "Google.Apis.Auth.dll",
-            "Google.Apis.Core.dll",
-            "Google.Apis.Drive.v2.dll",
+            "Renci.SshNet.dll",
         };
 
-        static Bootstrap()
+        internal static void Run()
         {
             foreach (string assemblyName in assemblyNames)
             {
@@ -39,10 +33,19 @@ namespace SmartSync.GoogleDrive
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            return AppDomain.CurrentDomain.GetAssemblies()
-                                          .FirstOrDefault(a => a.FullName == args.Name);
-        }
+            Assembly assembly = null;
 
-        public static void Initialize() { }
+            // Check already loaded assemblies
+            assembly = assembly ?? AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.FullName == args.Name);
+
+            // Try to load full assembly name
+            try
+            {
+                assembly = assembly ?? Assembly.Load(new AssemblyName(args.Name));
+            }
+            catch { }
+
+            return assembly;
+        }
     }
 }

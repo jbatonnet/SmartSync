@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using SmartSync.Common;
+
 using Renci.SshNet;
 
-namespace SmartSync.Common
+namespace SmartSync.Sftp
 {
     public class SftpFile : File
     {
@@ -78,9 +79,9 @@ namespace SmartSync.Common
             this.file = file;
         }
 
-        public override Stream Open(FileAccess access)
+        public override System.IO.Stream Open(System.IO.FileAccess access)
         {
-            return storage.Client.Open(file.FullName, FileMode.Open, access);
+            return storage.Client.Open(file.FullName, System.IO.FileMode.Open, access);
         }
     }
 }

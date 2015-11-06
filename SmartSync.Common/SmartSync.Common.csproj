@@ -35,10 +35,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Renci.SshNet, Version=2013.4.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SSH.NET.2013.4.7\lib\net40\Renci.SshNet.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
@@ -69,9 +65,6 @@
     <Compile Include="Storages\Basic\BasicDirectory.cs" />
     <Compile Include="Storages\Basic\BasicFile.cs" />
     <Compile Include="Storages\Basic\BasicStorage.cs" />
-    <Compile Include="Storages\Sftp\SftpFile.cs" />
-    <Compile Include="Storages\Sftp\SftpDirectory.cs" />
-    <Compile Include="Storages\Sftp\SftpStorage.cs" />
     <Compile Include="Storages\Zip\ZipDirectory.cs" />
     <Compile Include="Storages\Zip\ZipFile.cs" />
     <Compile Include="Storages\Zip\ZipRoot.cs" />
@@ -80,7 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\packages\SSH.NET.2013.4.7\lib\net40\Renci.SshNet.dll">

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using SmartSync.Common;
+
 using Renci.SshNet;
 
-namespace SmartSync.Common
+namespace SmartSync.Sftp
 {
     public class SftpDirectory : Directory
     {
@@ -82,7 +83,7 @@ namespace SmartSync.Common
 
             Renci.SshNet.Sftp.SftpFile result = storage.Client.Get(path);
             if (result == null)
-                throw new IOException("Unable to create the specified directory");
+                throw new System.IO.IOException("Unable to create the specified directory");
 
             return new SftpDirectory(storage, this, result);
         }
@@ -105,7 +106,7 @@ namespace SmartSync.Common
 
             Renci.SshNet.Sftp.SftpFile result = storage.Client.Get(path);
             if (result == null)
-                throw new IOException("Unable to create the specified file");
+                throw new System.IO.IOException("Unable to create the specified file");
 
             return new SftpFile(storage, this, result);
         }

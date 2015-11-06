@@ -6,6 +6,10 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.Common", "SmartSync.Common\SmartSync.Common.csproj", "{66FC3CA1-E596-4C66-A8EA-46169662B0EA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.Engine", "SmartSync.Engine\SmartSync.Engine.csproj", "{EC954B34-0715-4CEB-9730-B949A820A13A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BDD48D2C-E69A-4F60-89B6-23CAB63F69A5} = {BDD48D2C-E69A-4F60-89B6-23CAB63F69A5}
+		{E7FD137C-61E9-4999-9C84-04DE3BA418BF} = {E7FD137C-61E9-4999-9C84-04DE3BA418BF}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E874FC5C-685B-4504-8991-043EE3DC37FD}"
 	ProjectSection(SolutionItems) = preProject
@@ -18,6 +22,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.OneDrive", "SmartSync.OneDrive\SmartSync.OneDrive.csproj", "{60DFB0D8-FAB1-44BE-B5E0-027182B172D5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.GoogleDrive", "SmartSync.GoogleDrive\SmartSync.GoogleDrive.csproj", "{BDD48D2C-E69A-4F60-89B6-23CAB63F69A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.Sftp", "SmartSync.Sftp\SmartSync.Sftp.csproj", "{E7FD137C-61E9-4999-9C84-04DE3BA418BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +47,10 @@ Global
 		{BDD48D2C-E69A-4F60-89B6-23CAB63F69A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDD48D2C-E69A-4F60-89B6-23CAB63F69A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDD48D2C-E69A-4F60-89B6-23CAB63F69A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7FD137C-61E9-4999-9C84-04DE3BA418BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7FD137C-61E9-4999-9C84-04DE3BA418BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7FD137C-61E9-4999-9C84-04DE3BA418BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7FD137C-61E9-4999-9C84-04DE3BA418BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,5 +58,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{60DFB0D8-FAB1-44BE-B5E0-027182B172D5} = {20D060A3-9F49-4ECD-96DC-6E05CD186420}
 		{BDD48D2C-E69A-4F60-89B6-23CAB63F69A5} = {20D060A3-9F49-4ECD-96DC-6E05CD186420}
+		{E7FD137C-61E9-4999-9C84-04DE3BA418BF} = {20D060A3-9F49-4ECD-96DC-6E05CD186420}
 	EndGlobalSection
 EndGlobal
