@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Profile>
     <Properties>
-        <DiffType>Sizes</DiffType>
+        <DiffType>Dates</DiffType>
         <SyncType>LeftToRight</SyncType>
         <References>
             <Assembly Path="SmartSync.GoogleDrive.dll" />
@@ -12,5 +12,6 @@
     </Left>
     <Right Type="SmartSync.GoogleDrive.GoogleDriveStorage">
         <Path>/Backups/Test</Path>
+        <UseVersioning>False</UseVersioning>
     </Right>
 </Profile>

@@ -44,7 +44,7 @@ namespace SmartSync.GoogleDrive
             {
                 FilesResource.ListRequest request = storage.Service.Files.List();
                 request.Q = string.Format("'{0}' in parents and trashed = false and mimeType = '{1}'", folder.Id, MimeType);
-                request.Fields = "items(id,title,fileSize,mimeType)";
+                request.Fields = "items(id,title,parents,fileSize)";
 
                 Google.Apis.Drive.v2.Data.File[] folders = request.Execute().Items.ToArray();
                 return folders.Select(f => new GoogleDriveDirectory(storage, this, f));
@@ -56,7 +56,7 @@ namespace SmartSync.GoogleDrive
             {
                 FilesResource.ListRequest request = storage.Service.Files.List();
                 request.Q = string.Format("'{0}' in parents and trashed = false and mimeType != '{1}'", folder.Id, MimeType);
-                request.Fields = "items(id,title,fileSize,mimeType)";
+                request.Fields = "items(id,title,parents,fileSize,modifiedDate,md5Checksum,downloadUrl)";
 
                 Google.Apis.Drive.v2.Data.File[] files = request.Execute().Items.ToArray();
                 return files.Select(f => new GoogleDriveFile(storage, this, f));
@@ -120,7 +120,7 @@ namespace SmartSync.GoogleDrive
             file.Parents = new List<Google.Apis.Drive.v2.Data.ParentReference>() { new Google.Apis.Drive.v2.Data.ParentReference() { Id = this.folder.Id } };
 
             var request = storage.Service.Files.Insert(file);
-            request.Execute();
+            file = request.Execute();
 
             return new GoogleDriveFile(storage, this, file);
         }

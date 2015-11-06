@@ -34,7 +34,7 @@ namespace SmartSync.GoogleDrive
         {
             get
             {
-                throw new NotImplementedException();
+                return storage;
             }
         }
         public override DateTime Date
@@ -45,7 +45,15 @@ namespace SmartSync.GoogleDrive
             }
             set
             {
-                throw new NotImplementedException();
+                Google.Apis.Drive.v2.Data.File test = new Google.Apis.Drive.v2.Data.File();
+                test.ModifiedDate = value;
+
+                FilesResource.UpdateRequest request = storage.Service.Files.Update(test, file.Id);
+
+                request.ModifiedDateBehavior = FilesResource.UpdateRequest.ModifiedDateBehaviorEnum.FromBody;
+                request.SetModifiedDate = true;
+
+                request.Execute();
             }
         }
         public override ulong Size
@@ -76,7 +84,8 @@ namespace SmartSync.GoogleDrive
 
         public override System.IO.Stream Open(System.IO.FileAccess access)
         {
-            return new System.IO.MemoryStream();
+            //return new System.IO.MemoryStream();
+            return new GoogleDriveStream(storage, file);
         }
     }
 }

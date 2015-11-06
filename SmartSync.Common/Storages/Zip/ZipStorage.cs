@@ -62,6 +62,13 @@ namespace SmartSync.Common
             root = new ZipRoot(this);
         }
 
+        /*public override IEnumerable<Directory> GetAllDirectories(string[] exclusions = null)
+        {
+            return Archive.Entries.AsParallel()
+                                  .Where(e => e.FullName.EndsWith("/"))
+                                  .Select(e => new ZipDirectory(this, null, e));
+        }*/
+
         public override void Dispose()
         {
             if (Archive != null)

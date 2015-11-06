@@ -53,14 +53,9 @@ namespace SmartSync.Common
             foreach (DirectoryDiff directoryDiff in directoryDiffs)
                 yield return directoryDiff;
 
-            // Left files
-            File[] leftFiles = leftDirectories.SelectMany(d => d.Files)
-                                              .Where(f => !exclusions.Any(e => MatchPattern(f.Path, e)))
-                                              .ToArray();
-            // Right files
-            File[] rightFiles = rightDirectories.SelectMany(d => d.Files)
-                                                .Where(f => !exclusions.Any(e => MatchPattern(f.Path, e)))
-                                                .ToArray();
+            // Files
+            File[] leftFiles = Left.GetAllFiles(exclusions).ToArray();
+            File[] rightFiles = Right.GetAllFiles(exclusions).ToArray();
 
             // Compute file differences
             FileComparer diffComparer = new FileComparer(DiffType);
