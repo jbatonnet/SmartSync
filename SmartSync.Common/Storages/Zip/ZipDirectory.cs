@@ -127,22 +127,40 @@ namespace SmartSync.Common
 
         public override Directory CreateDirectory(string name)
         {
+            if (!Storage.IsNameValid(name))
+                throw new ArgumentException("The specified name contains invalid characters");
+
             ZipArchiveEntry entry = storage.Archive.CreateEntry(directory.FullName + name + "/");
+            if (entry == null)
+                throw new System.IO.IOException("Unable to create the specified directory");
+
             return new ZipDirectory(storage, this, entry);
         }
         public override void DeleteDirectory(Directory directory)
         {
+            if (!directory.Parent.Equals(this))
+                throw new ArgumentException("The specified directory could not be found");
+
             ZipDirectory zipDirectory = directory as ZipDirectory;
             zipDirectory.directory.Delete();
         }
 
         public override File CreateFile(string name)
         {
+            if (!Storage.IsNameValid(name))
+                throw new ArgumentException("The specified name contains invalid characters");
+
             ZipArchiveEntry entry = storage.Archive.CreateEntry(directory.FullName + name, storage.Compression);
+            if (entry == null)
+                throw new System.IO.IOException("Unable to create the specified file");
+
             return new ZipFile(storage, this, entry);
         }
         public override void DeleteFile(File file)
         {
+            if (!file.Parent.Equals(this))
+                throw new ArgumentException("The specified directory could not be found");
+
             ZipFile zipFile = file as ZipFile;
             zipFile.file.Delete();
         }

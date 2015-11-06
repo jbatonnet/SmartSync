@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Profile>
+    <Properties>
+        <DiffType>Dates</DiffType>
+        <SyncType>LeftToRight</SyncType>
+        <References>
+            <Assembly Path="SmartSync.OneDrive.dll" />
+        </References>
+    </Properties>
+    <Left Type="SmartSync.Common.BasicStorage">
+        <Path>..\Samples\Left</Path>
+    </Left>
+    <Right Type="SmartSync.OneDrive.OneDriveStorage">
+        <Path>/Backups/Test</Path>
+    </Right>
+</Profile>

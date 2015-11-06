@@ -15,6 +15,7 @@ namespace SmartSync.Engine
     {
         public static Dictionary<string, string> Parameters { get; private set; }
 
+        [STAThread]
         public static void Main(string[] args)
         {
             Parameters = Environment.GetCommandLineArgs()
