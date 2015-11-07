@@ -114,8 +114,9 @@ namespace SmartSync.OneDrive
 
             Item item = new Item();
             item.Name = name;
+            item.File = new Microsoft.OneDrive.Sdk.File();
 
-            Task<Item> task = storage.Client.Drive.Items[directory.Id].Children.Request().AddAsync(item);
+            Task<Item> task = storage.Client.Drive.Items[directory.Id].ItemWithPath(name).Content.Request().PutAsync<Item>(new System.IO.MemoryStream());
             task.Wait();
 
             return new OneDriveFile(storage, this, task.Result);

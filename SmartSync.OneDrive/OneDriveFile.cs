@@ -49,12 +49,13 @@ namespace SmartSync.OneDrive
         {
             get
             {
-                return file.LastModifiedDateTime?.DateTime ?? DateTime.MinValue;
+                return (file.FileSystemInfo.LastModifiedDateTime?.DateTime ?? DateTime.MinValue).ToLocalTime();
             }
             set
             {
                 Item item = new Item();
-                item.LastModifiedDateTime = new DateTimeOffset(value);
+                item.FileSystemInfo = new Microsoft.OneDrive.Sdk.FileSystemInfo();
+                item.FileSystemInfo.LastModifiedDateTime = new DateTimeOffset(value.ToUniversalTime());
 
                 Task<Item> task = storage.Client.Drive.Items[file.Id].Request().UpdateAsync(item);
                 task.Wait();
