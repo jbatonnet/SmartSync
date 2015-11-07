@@ -11,7 +11,6 @@ namespace SmartSync.OneDrive
         private static string[] assemblyNames =
         {
             "Newtonsoft.Json.dll",
-            "OneDriveSdk.dll",
         };
 
         internal static void Run()

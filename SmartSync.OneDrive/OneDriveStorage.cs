@@ -10,41 +10,34 @@ using Microsoft.OneDrive.Sdk;
 using Microsoft.OneDrive.Sdk.WindowsForms;
 using SmartSync.OneDrive.Properties;
 using Newtonsoft.Json;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SmartSync.OneDrive
 {
-    public class OneDriveCredentialCache : CredentialCache
+    public class OneDriveInfoProvider : ServiceInfoProvider
     {
-        public OneDriveCredentialCache()
-        {
-            if (!string.IsNullOrEmpty(Settings.Default.Credentials))
-                InitializeCacheFromBlob(JsonConvert.DeserializeObject<byte[]>(Settings.Default.Credentials));
+        public OneDriveInfoProvider() : base(new FormsWebAuthenticationUi()) { }
 
-            BeforeAccess = CredentialCache_BeforeAccess;
-            AfterAccess = CredentialCache_AfterAccess;
-        }
+        public override async Task<ServiceInfo> GetServiceInfo(AppConfig appConfig, CredentialCache credentialCache, IHttpProvider httpProvider)
+        {
+            ServiceInfo serviceInfo = await base.GetServiceInfo(appConfig, credentialCache, httpProvider);
 
-        private void CredentialCache_BeforeAccess(CredentialCacheNotificationArgs args)
-        {
-            if (!string.IsNullOrEmpty(Settings.Default.Credentials))
-                args.CredentialCache.InitializeCacheFromBlob(JsonConvert.DeserializeObject<byte[]>(Settings.Default.Credentials));
-        }
-        private void CredentialCache_AfterAccess(CredentialCacheNotificationArgs args)
-        {
-            if (HasStateChanged)
+            if (credentialCache.cacheDictionary.Count > 0)
             {
-                Settings.Default.Credentials = JsonConvert.SerializeObject(GetCacheBlob());
-                Settings.Default.Save();
-
-                HasStateChanged = false;
+                var credentialPair = credentialCache.cacheDictionary.First();
+                serviceInfo.UserId = credentialPair.Key.UserId;
             }
+
+            return serviceInfo;
         }
     }
 
     public class OneDriveStorage : Storage
     {
-        private const string returnUrl = "https://login.live.com/oauth20_desktop.srf";
-        private static string[] scopes = new[] { "wl.signin", "wl.offline_access", "onedrive.readwrite" };
+        private const string applicationId = "000000004416B479";
+        private const string applicationReturnUrl = "https://login.live.com/oauth20_desktop.srf";
+        private readonly static string[] applicationScopes = new[] { "wl.signin", "wl.offline_access", "onedrive.readwrite" };
+        private const string applicationSecret = "GYdcxFCOMNAdwA2Ha5PIHFX-Xs0klVex";
 
         public string Path { get; set; } = "/";
         public override Directory Root
@@ -66,13 +59,28 @@ namespace SmartSync.OneDrive
             if (Client != null)
                 return;
 
-            // Authenticate with OneDrive
-            Client = OneDriveClient.GetMicrosoftAccountClient("000000004416B479", returnUrl, scopes, credentialCache: new OneDriveCredentialCache(), webAuthenticationUi: new FormsWebAuthenticationUi());
+            // Load credential cache
+            CredentialCache credentialCache = new CredentialCache();
+            if (!string.IsNullOrEmpty(Settings.Default.Credentials))
+                credentialCache.InitializeCacheFromBlob(Convert.FromBase64String(Settings.Default.Credentials));
 
+            // Authenticate with OneDrive
+            Client = OneDriveClient.GetMicrosoftAccountClient(applicationId, applicationReturnUrl, applicationScopes, applicationSecret, credentialCache, null, new OneDriveInfoProvider());
             Task<AccountSession> oneDriveSessionTask = Client.AuthenticateAsync();
             oneDriveSessionTask.Wait();
-
             Session = oneDriveSessionTask.Result;
+
+            // Save credentials
+            if (Session == null)
+            {
+                Settings.Default.Credentials = null;
+                Settings.Default.Save();
+            }
+            else if (credentialCache.HasStateChanged)
+            {
+                Settings.Default.Credentials = Convert.ToBase64String(credentialCache.GetCacheBlob());
+                Settings.Default.Save();
+            }
 
             // Find specified root folder
             if (!Path.StartsWith("/") || !IsPathValid(Path))

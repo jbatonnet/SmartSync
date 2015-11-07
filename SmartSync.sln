@@ -15,6 +15,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E874FC5C-685B-4504-8991-043EE3DC37FD}"
 	ProjectSection(SolutionItems) = preProject
 		Samples\Basic.xsync = Samples\Basic.xsync
+		Samples\Deploy.xsync = Samples\Deploy.xsync
 		Samples\GoogleDrive.xsync = Samples\GoogleDrive.xsync
 		Samples\OneDrive.xsync = Samples\OneDrive.xsync
 		Samples\Sftp.xsync = Samples\Sftp.xsync

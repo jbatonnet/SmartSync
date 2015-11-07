@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Profile>
+    <Properties>
+        <DiffType>Dates</DiffType>
+        <SyncType>LeftToRight</SyncType>
+        <Exclusions>
+            <Exclusion>**.zip</Exclusion>
+            <Exclusion>**.config</Exclusion>
+            <Exclusion>**.vshost.*</Exclusion>
+        </Exclusions>
+    </Properties>
+    <Left Type="SmartSync.Common.BasicStorage">
+        <Path>..\Binaries</Path>
+    </Left>
+    <Right Type="SmartSync.Common.ZipStorage">
+        <Storage Type="SmartSync.Common.BasicStorage">
+            <Path>..\Binaries</Path>
+        </Storage>
+        <Path>/SmartSync.zip</Path>
+    </Right>
+</Profile>
