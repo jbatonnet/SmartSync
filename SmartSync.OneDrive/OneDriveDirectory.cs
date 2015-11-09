@@ -112,10 +112,6 @@ namespace SmartSync.OneDrive
             if (!Storage.IsNameValid(name))
                 throw new ArgumentException("The specified name contains invalid characters");
 
-            Item item = new Item();
-            item.Name = name;
-            item.File = new Microsoft.OneDrive.Sdk.File();
-
             Task<Item> task = storage.Client.Drive.Items[directory.Id].ItemWithPath(name).Content.Request().PutAsync<Item>(new System.IO.MemoryStream());
             task.Wait();
 

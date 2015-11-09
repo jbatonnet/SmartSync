@@ -14,7 +14,7 @@ namespace SmartSync.Common
         {
             get
             {
-                return new BasicDirectory(this, null, Path);
+                return new BasicDirectory(this, Path);
             }
         }
 
@@ -23,6 +23,29 @@ namespace SmartSync.Common
         {
             Path = path;
         }
+
+        /*public override IEnumerable<Directory> GetAllDirectories(string[] exclusions = null)
+        {
+            int length = Path.FullName.Length;
+
+            IEnumerable<DirectoryInfo> directories = Path.EnumerateDirectories("*", SearchOption.AllDirectories)
+                .AsParallel()
+                .Where(d => exclusions != null && exclusions.Any(e => MatchPattern(d.FullName.Substring(length).Replace('\\', '/'), e)));
+
+            yield return Root;
+
+            foreach (DirectoryInfo directory in directories)
+                yield return new BasicDirectory(this, directory);
+        }*/
+        /*public override IEnumerable<File> GetAllFiles(string[] exclusions = null)
+        {
+            int length = Path.FullName.Length;
+
+            return Path.EnumerateFiles("*", SearchOption.AllDirectories)
+                .AsParallel()
+                .Where(f => exclusions != null && exclusions.Any(e => MatchPattern(f.FullName.Substring(length).Replace('\\', '/'), e)))
+                .Select(f => new BasicFile(this, f));
+        }*/
 
         public override string ToString()
         {

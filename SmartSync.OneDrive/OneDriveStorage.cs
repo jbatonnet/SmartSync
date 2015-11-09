@@ -96,6 +96,54 @@ namespace SmartSync.OneDrive
             root = task.Result;
         }
 
+        public /*override*/ Directory _GetDirectory(string path)
+        {
+            Initialize();
+
+            if (!Path.StartsWith("/") || !IsPathValid(Path))
+                throw new Exception("The specified path is not valid");
+
+            path = Path.Trim('/') + "/" + path.Trim('/');
+
+            Task<Item> task = Client.Drive.Root.ItemWithPath(path).Request().GetAsync();
+            task.Wait();
+
+            // TODO: Rebuild directory hierarchy
+
+            return new OneDriveDirectory(this, null, task.Result);
+        }
+        public /*override*/ Common.File _GetFile(string path)
+        {
+            Initialize();
+
+            if (!Path.StartsWith("/") || !IsPathValid(Path) || Path.EndsWith("/"))
+                throw new Exception("The specified path is not valid");
+
+            path = Path.Trim('/') + "/" + path.Trim('/');
+
+            Task<Item> task = Client.Drive.Root.ItemWithPath(path).Request().GetAsync();
+            task.Wait();
+
+            // TODO: Rebuild file hierarchy
+
+            return new OneDriveFile(this, null, task.Result);
+        }
+
+        public /*override*/ IEnumerable<Directory> _GetAllDirectories(string[] exclusions = null)
+        {
+            Initialize();
+
+            Task<IItemSearchCollectionPage> task = Client.Drive.Items[root.Id].Search("Excel").Request().GetAsync();
+            task.Wait();
+
+            foreach (Item item in task.Result)
+            {
+                item.ToString();
+            }
+
+            yield break;
+        }
+
         public override string ToString()
         {
             return string.Format("OneDrive {{ Path: {0} }}", Path);

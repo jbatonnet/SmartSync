@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Profile>
     <Properties>
-        <DiffType>Sizes</DiffType>
+        <DiffType>Dates</DiffType>
         <SyncType>LeftToRight</SyncType>
     </Properties>
     <Left Type="SmartSync.Common.BasicStorage">
-        <Path>..\Test\Left</Path>
+        <Path>..\Samples\Left</Path>
     </Left>
     <Right Type="SmartSync.Common.ZipStorage">
         <Storage Type="SmartSync.Common.BasicStorage">
-            <Path>..\Test</Path>
+            <Path>..\Samples</Path>
         </Storage>
         <Path>/Zip.zip</Path>
     </Right>

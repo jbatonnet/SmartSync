@@ -62,12 +62,52 @@ namespace SmartSync.Common
             root = new ZipRoot(this);
         }
 
-        /*public override IEnumerable<Directory> GetAllDirectories(string[] exclusions = null)
+        public override IEnumerable<Directory> GetAllDirectories(string[] exclusions = null)
         {
-            return Archive.Entries.AsParallel()
-                                  .Where(e => e.FullName.EndsWith("/"))
-                                  .Select(e => new ZipDirectory(this, null, e));
-        }*/
+            Initialize();
+
+            ZipArchiveEntry[] entries = Archive.Entries.AsParallel()
+                                                       .Where(e => e.FullName.EndsWith("/"))
+                                                       .OrderBy(e => e.FullName) // TODO: Very costly
+                                                       .ToArray();
+
+            // Wrap all folders and rebuild parents
+            List<ZipDirectory> directories = new List<ZipDirectory>(entries.Length);
+            foreach (ZipArchiveEntry entry in entries)
+            {
+                if (exclusions != null && exclusions.Any(e => MatchPattern("/" + entry.FullName, e)))
+                    continue;
+
+                ZipDirectory parent = directories.Reverse<ZipDirectory>().FirstOrDefault(d => entry.FullName.StartsWith(d.directory.FullName)); // TODO: Optimize StartsWith call with reverse string match test
+                directories.Add(new ZipDirectory(this, parent ?? Root, entry));
+            }
+
+            // Return each directory
+            yield return Root;
+            foreach (ZipDirectory directory in directories)
+                yield return directory;
+        }
+        public override IEnumerable<File> GetAllFiles(string[] exclusions = null)
+        {
+            Initialize();
+
+            Directory[] directories = GetAllDirectories(exclusions).ToArray(); // TODO: Check to replace with Archive.Get(path) foreach item
+
+            ZipArchiveEntry[] entries = Archive.Entries.AsParallel()
+                                                       .Where(e => !e.FullName.EndsWith("/"))
+                                                       .OrderBy(e => e.FullName) // TODO: Very costly
+                                                       .ToArray();
+
+            // Wrap all folders and rebuild parents
+            foreach (ZipArchiveEntry entry in entries)
+            {
+                if (exclusions != null && exclusions.Any(e => MatchPattern("/" + entry.FullName, e)))
+                    continue;
+
+                Directory parent = directories.FirstOrDefault(d => entry.FullName.StartsWith(d.Path.TrimStart('/'))); // TODO: Optimize StartsWith call with reverse string match test
+                yield return new ZipFile(this, parent ?? Root, entry);
+            }
+        }
 
         public override void Dispose()
         {

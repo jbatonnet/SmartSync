@@ -24,7 +24,7 @@ namespace SmartSync.Common
         {
             get
             {
-                return parent;
+                return new BasicDirectory(storage, fileInfo.Directory);
             }
         }
         public override Storage Storage
@@ -62,13 +62,11 @@ namespace SmartSync.Common
         }
 
         private BasicStorage storage;
-        private BasicDirectory parent;
         internal FileInfo fileInfo;
 
-        public BasicFile(BasicStorage storage, BasicDirectory parent, FileInfo fileInfo)
+        public BasicFile(BasicStorage storage, FileInfo fileInfo)
         {
             this.storage = storage;
-            this.parent = parent;
             this.fileInfo = fileInfo;
         }
 
