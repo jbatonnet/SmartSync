@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,18 +14,20 @@ namespace SmartSync.Engine
 {
     class Program
     {
-        public static Dictionary<string, string> Parameters { get; private set; }
+        public static Dictionary<string, string> Options { get; private set; }
+        public static List<string> Parameters { get; private set; }
 
         [STAThread]
         public static void Main(string[] args)
         {
-            Parameters = Environment.GetCommandLineArgs()
-                                    .Where(p => p.StartsWith("/"))
-                                    .Select(p => p.TrimStart('/'))
-                                    .Select(p => new { Parameter = p.Trim(), Separator = p.Trim().IndexOf(':') })
-                                    .ToDictionary(p => p.Separator == -1 ? p.Parameter : p.Parameter.Substring(0, p.Separator).ToLower(), p => p.Separator == -1 ? null : p.Parameter.Substring(p.Separator + 1));
+            Options = args.Where(a => a.StartsWith("/"))
+                          .Select(a => a.TrimStart('/'))
+                          .Select(a => new { Parameter = a.Trim(), Separator = a.Trim().IndexOf(':') })
+                          .ToDictionary(a => a.Separator == -1 ? a.Parameter : a.Parameter.Substring(0, a.Separator).ToLower(), a => a.Separator == -1 ? null : a.Parameter.Substring(a.Separator + 1));
+            Parameters = args.Where(a => !a.StartsWith("/"))
+                             .ToList();
 
-            string profilePath = Environment.GetCommandLineArgs().Skip(1).LastOrDefault();
+            string profilePath = Parameters.FirstOrDefault();
             if (profilePath == null)
             {
                 Log.Error("You must specify a profile to run");
@@ -115,7 +118,7 @@ namespace SmartSync.Engine
 
         public static void Exit()
         {
-            if (Parameters.ContainsKey("pause"))
+            if (Debugger.IsAttached || Options.ContainsKey("pause"))
             {
                 Console.WriteLine();
                 Console.Write("Press any key to exit ...");
