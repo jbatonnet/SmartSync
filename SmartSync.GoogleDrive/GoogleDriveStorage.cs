@@ -130,20 +130,24 @@ namespace SmartSync.GoogleDrive
             if (!IsPathValid(Path) || Path[0] != '/')
                 throw new Exception("The specified path is not a valid path");
 
-            string[] parts = Path.Trim('/').Split('/');
             root = Service.Files.Get("root").Execute();
 
-            foreach (string part in parts)
+            if (Path != "/")
             {
-                FilesResource.ListRequest request = Service.Files.List();
-                request.Q = string.Format("'{0}' in parents and trashed = false and mimeType = '{1}' and title = '{2}'", root.Id, GoogleDriveDirectory.MimeType, part);
-                request.Fields = "items(id,title,fileSize,mimeType)";
+                string[] parts = Path.Trim('/').Split('/');
 
-                Google.Apis.Drive.v2.Data.File[] folders = request.Execute().Items.ToArray();
-                root = folders.SingleOrDefault();
+                foreach (string part in parts)
+                {
+                    FilesResource.ListRequest request = Service.Files.List();
+                    request.Q = string.Format("'{0}' in parents and trashed = false and mimeType = '{1}' and title = '{2}'", root.Id, GoogleDriveDirectory.MimeType, part);
+                    request.Fields = "items(id,title,fileSize,mimeType)";
 
-                if (root == null)
-                    throw new Exception("Could not find the specified folder");
+                    Google.Apis.Drive.v2.Data.File[] folders = request.Execute().Items.ToArray();
+                    root = folders.SingleOrDefault();
+
+                    if (root == null)
+                        throw new Exception("Could not find the specified folder");
+                }
             }
         }
 

@@ -10,8 +10,11 @@
     <Left Type="SmartSync.Common.BasicStorage">
         <Path>..\Samples\Left</Path>
     </Left>
-    <Right Type="SmartSync.GoogleDrive.GoogleDriveStorage">
-        <Path>/Backups/Test</Path>
-        <UseVersioning>False</UseVersioning>
+    <Right Type="SmartSync.Common.ZipStorage">
+        <Storage Type="SmartSync.GoogleDrive.GoogleDriveStorage">
+            <Path>/Backups/Test</Path>
+            <UseVersioning>False</UseVersioning>
+        </Storage>
+        <Path>/Right.zip</Path>
     </Right>
 </Profile>

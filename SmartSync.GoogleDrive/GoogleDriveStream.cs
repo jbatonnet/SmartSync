@@ -56,6 +56,7 @@ namespace SmartSync.GoogleDrive
 
         private MemoryStream dataStream = new MemoryStream();
         private bool written = false;
+        private bool disposed = false;
 
         public GoogleDriveStream(GoogleDriveStorage storage, Google.Apis.Drive.v2.Data.File file)
         {
@@ -100,6 +101,10 @@ namespace SmartSync.GoogleDrive
 
         protected override void Dispose(bool disposing)
         {
+            if (disposed)
+                return;
+
+            disposed = true;
             base.Dispose(disposing);
 
             if (written)
@@ -110,7 +115,6 @@ namespace SmartSync.GoogleDrive
                 request.NewRevision = storage.UseVersioning;
 
                 request.Upload();
-                
             }
 
             dataStream.Dispose();

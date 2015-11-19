@@ -104,7 +104,9 @@ namespace SmartSync.Common
                 if (exclusions != null && exclusions.Any(e => MatchPattern("/" + entry.FullName, e)))
                     continue;
 
-                Directory parent = directories.FirstOrDefault(d => entry.FullName.StartsWith(d.Path.TrimStart('/'))); // TODO: Optimize StartsWith call with reverse string match test
+                string parentPath = "/" + entry.FullName.Substring(0, Math.Max(0, entry.FullName.LastIndexOf('/')));
+                Directory parent = directories.FirstOrDefault(d => d.Path == parentPath); // TODO: Optimize StartsWith call with reverse string match test
+
                 yield return new ZipFile(this, parent ?? Root, entry);
             }
         }
