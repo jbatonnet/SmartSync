@@ -9,35 +9,54 @@ namespace SmartSync.Common
 {
     public enum DiffType
     {
+        /// <summary>
+        /// Compare file paths only
+        /// </summary>
         Paths,
+
+        /// <summary>
+        /// Compare file sizes to detect differences
+        /// </summary>
         Sizes,
+
+        /// <summary>
+        /// Compare file write dates to detect differences
+        /// </summary>
         Dates,
-        Hashes
+
+        /// <summary>
+        /// Compare file hashes to detect differences
+        /// </summary>
+        Hashes,
     }
 
     public enum SyncType
     {
-        LeftToRight,
-        RightToleft,
-        Sync
+        /// <summary>
+        /// Add left content to right content, update files if necessary
+        /// </summary>
+        Backup,
+
+        /// <summary>
+        /// Replace all right content with left content, remove files if necessary
+        /// </summary>
+        Clone,
+
+        /// <summary>
+        /// Sync all files between left and right storage, keep newest files on both sides
+        /// </summary>
+        Sync,
     }
 
     public abstract class Profile : IDisposable
     {
-        static Profile()
-        {
-            Bootstrap.Initialize();
-        }
-
         public virtual DiffType DiffType { get; } = DiffType.Dates;
-        public virtual SyncType SyncType { get; } = SyncType.Sync;
+        public virtual SyncType SyncType { get; } = SyncType.Backup;
 
         public abstract IEnumerable<string> Exclusions { get; }
 
         public abstract Storage Left { get; }
         public abstract Storage Right { get; }
-
-        // TODO: Provide helpers to get all directories/files
 
         public virtual IEnumerable<Diff> GetDifferences()
         {
@@ -49,7 +68,7 @@ namespace SmartSync.Common
 
             // Compute directory differences
             IEnumerable<DirectoryDiff> directoryDiffs = FullOuterJoin(leftDirectories, rightDirectories, l => l.Path, r => r.Path, (l, r, p) => new DirectoryDiff(Left, l, Right, r))
-                                                                  .Where(d => d.Left == null || d.Right == null);
+                                                            .Where(d => d.Left == null || d.Right == null);
             foreach (DirectoryDiff directoryDiff in directoryDiffs)
                 yield return directoryDiff;
 
@@ -58,9 +77,9 @@ namespace SmartSync.Common
             File[] rightFiles = Right.GetAllFiles(exclusions).ToArray();
 
             // Compute file differences
-            FileComparer diffComparer = new FileComparer(DiffType);
-            IEnumerable<FileDiff> fileDiffs = FullOuterJoin(leftFiles, rightFiles, l => l, r => r, (l, r, p) => new FileDiff(Left, l, Right, r), keyComparer: new FileComparer(DiffType.Paths))
-                                                  .Where(d => d.Left == null || d.Right == null || !diffComparer.Equals(d.Left, d.Right));
+            FileComparer comparer = new FileComparer(DiffType);
+            IEnumerable<FileDiff> fileDiffs = FullOuterJoin(leftFiles, rightFiles, l => l, r => r, (l, r, p) => new FileDiff(Left, l, Right, r, comparer), keyComparer: new FileComparer(DiffType.Paths))
+                                                  .Where(d => d.Left == null || d.Right == null || !comparer.Equals(d.Left, d.Right));
             foreach (FileDiff fileDiff in fileDiffs)
                 yield return fileDiff;
         }
@@ -102,18 +121,16 @@ namespace SmartSync.Common
         protected static IEnumerable<TResult> FullOuterJoin<TLeft, TRight, TKey, TResult>(IEnumerable<TLeft> left, IEnumerable<TRight> right, Func<TLeft, TKey> leftKeySelector, Func<TRight, TKey> rightKeySelector, Func<TLeft, TRight, TKey, TResult> projection, TLeft leftDefault = default(TLeft), TRight rightDefault = default(TRight), IEqualityComparer<TKey> keyComparer = null)
         {
             keyComparer = keyComparer ?? EqualityComparer<TKey>.Default;
-            var alookup = left.ToLookup(leftKeySelector, keyComparer);
-            var blookup = right.ToLookup(rightKeySelector, keyComparer);
+            ILookup<TKey, TLeft> leftLookup = left.ToLookup(leftKeySelector, keyComparer);
+            ILookup<TKey, TRight> rightLookup = right.ToLookup(rightKeySelector, keyComparer);
 
-            var keys = new HashSet<TKey>(alookup.Select(p => p.Key), keyComparer);
-            keys.UnionWith(blookup.Select(p => p.Key));
+            HashSet<TKey> keys = new HashSet<TKey>(leftLookup.Select(p => p.Key), keyComparer);
+            keys.UnionWith(rightLookup.Select(p => p.Key));
 
-            var join = from key in keys
-                       from xa in alookup[key].DefaultIfEmpty(leftDefault)
-                       from xb in blookup[key].DefaultIfEmpty(rightDefault)
-                       select projection(xa, xb, key);
-
-            return join;
+            return from key in keys
+                   from leftValue in leftLookup[key].DefaultIfEmpty(leftDefault)
+                   from rightValue in rightLookup[key].DefaultIfEmpty(rightDefault)
+                   select projection(leftValue, rightValue, key);
         }
     }
 }

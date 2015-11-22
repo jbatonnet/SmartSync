@@ -97,12 +97,22 @@ namespace SmartSync.Common
 
             // Decode properties
             DiffType diffType;
-            if (diffTypeElement != null && Enum.TryParse(diffTypeElement.Value, out diffType))
+            if (diffTypeElement != null)
+            {
+                if (!Enum.TryParse(diffTypeElement.Value, out diffType))
+                    throw new FormatException("Could not parse the specified diff type");
+
                 profile.diffType = diffType;
+            }
 
             SyncType syncType;
-            if (syncTypeElement != null && Enum.TryParse(syncTypeElement.Value, out syncType))
+            if (syncTypeElement != null)
+            {
+                if (!Enum.TryParse(syncTypeElement.Value, out syncType))
+                    throw new FormatException("Could not parse the specified sync type");
+
                 profile.syncType = syncType;
+            }
 
             List<string> exclusions = new List<string>();
             if (exclusionsElement != null)

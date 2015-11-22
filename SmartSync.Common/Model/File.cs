@@ -40,14 +40,13 @@ namespace SmartSync.Common
 
             if (DiffType == DiffType.Sizes && left.Size != right.Size)
                 return false;
-            if (DiffType == DiffType.Dates && Math.Abs((left.Date - right.Date).TotalSeconds) >= 2) // FIXME: What an ugly way to do this
+            if (DiffType == DiffType.Dates && CompareFileDates(left, right) != 0)
                 return false;
             if (DiffType == DiffType.Hashes && left.Hash != right.Hash)
                 return false;
 
             return true;
         }
-
         public int GetHashCode(File file)
         {
             return GetFileKey(file, DiffType).GetHashCode();
@@ -65,6 +64,16 @@ namespace SmartSync.Common
                 return file.Hash;
 
             return file.Path;
+        }
+        public static int CompareFileDates(File left, File right)
+        {
+            // FIXME: What an ugly way to do this
+            double diff = (left.Date - right.Date).TotalSeconds;
+
+            if (Math.Abs(diff) < 2)
+                return 0;
+
+            return (int)diff;
         }
     }
 
@@ -116,62 +125,67 @@ namespace SmartSync.Common
 
         private Storage leftStorage, rightStorage;
         private File leftFile, rightFile;
+        private FileComparer comparer;
 
-        public FileDiff(Storage leftStorage, File leftFile, Storage rightStorage, File rightFile)
+        public FileDiff(Storage leftStorage, File leftFile, Storage rightStorage, File rightFile, FileComparer comparer)
         {
             this.leftStorage = leftStorage;
             this.rightStorage = rightStorage;
             this.leftFile = leftFile;
             this.rightFile = rightFile;
+            this.comparer = comparer;
+        }
+
+        public Action GetAction(SyncType syncType)
+        {
+            switch (syncType)
+            {
+                case SyncType.Backup:
+                {
+                    if (Right == null)
+                        return new CopyFileAction(Left, RightStorage, Left.Parent.Path, Left.Name);
+                    else if (Left != null)
+                        return new ReplaceFileAction(Left, Right);
+
+                    break;
+                }
+
+                case SyncType.Clone:
+                {
+                    if (Left == null)
+                        return new DeleteFileAction(Right);
+                    else if (Right == null)
+                        return new CopyFileAction(Left, RightStorage, Left.Parent.Path, Left.Name);
+                    else
+                        return new ReplaceFileAction(Left, Right);
+                }
+
+                case SyncType.Sync:
+                {
+                    if (Left == null)
+                        return new CopyFileAction(Right, LeftStorage, Right.Parent.Path, Right.Name);
+                    else if (Right == null)
+                        return new CopyFileAction(Left, RightStorage, Left.Parent.Path, Left.Name);
+                    else
+                    {
+                        int diff = FileComparer.CompareFileDates(Left, Right);
+
+                        if (diff > 0)
+                            return new CopyFileAction(Left, RightStorage, Left.Parent.Path, Left.Name);
+                        else if (diff < 0)
+                            return new CopyFileAction(Right, LeftStorage, Right.Parent.Path, Right.Name);
+                        else
+                            throw new NotImplementedException("Files are different, but they have the same date");
+                    }
+                }
+            }
+
+            return null;
         }
 
         public override string ToString()
         {
             return (Left?.Path ?? "null") + " - " + (Right?.Path ?? "null");
-        }
-
-        public Action GetAction(SyncType syncType)
-        {
-            if (Left == null)
-            {
-                switch (syncType)
-                {
-                    case SyncType.LeftToRight:
-                        return new DeleteFileAction(rightFile);
-
-                    case SyncType.RightToleft:
-                    case SyncType.Sync:
-                        return new CopyFileAction(rightFile, leftStorage, rightFile.Parent.Path, rightFile.Name);
-                }
-            }
-            else if (Right == null)
-            {
-                switch (syncType)
-                {
-                    case SyncType.RightToleft:
-                        return new DeleteFileAction(leftFile);
-
-                    case SyncType.LeftToRight:
-                    case SyncType.Sync:
-                        return new CopyFileAction(leftFile, rightStorage, leftFile.Parent.Path, leftFile.Name);
-                }
-            }
-            else
-            {
-                switch (syncType)
-                {
-                    case SyncType.LeftToRight:
-                        return new ReplaceFileAction(leftFile, rightFile);
-
-                    case SyncType.RightToleft:
-                        return new ReplaceFileAction(rightFile, leftFile);
-
-                    case SyncType.Sync:
-                        throw new NotImplementedException();
-                }
-            }
-
-            return null;
         }
     }
 }

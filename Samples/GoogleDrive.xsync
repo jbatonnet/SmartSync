@@ -2,7 +2,7 @@
 <Profile>
     <Properties>
         <DiffType>Dates</DiffType>
-        <SyncType>LeftToRight</SyncType>
+        <SyncType>Clone</SyncType>
         <References>
             <Assembly Path="SmartSync.GoogleDrive.dll" />
         </References>

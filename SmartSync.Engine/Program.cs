@@ -52,7 +52,7 @@ namespace SmartSync.Engine
                 {
                     case ".xsync": profile = XProfile.Load(XDocument.Load(profileInfo.FullName)); break;
                 }
-           }
+            }
             catch (Exception e)
             {
                 Log.Error("Error while loading the specified profile: {0}", e.Message);

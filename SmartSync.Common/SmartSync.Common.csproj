@@ -52,7 +52,6 @@
     <Compile Include="Actions\DeleteDirectory.cs" />
     <Compile Include="Actions\DeleteFile.cs" />
     <Compile Include="Actions\ReplaceFile.cs" />
-    <Compile Include="Bootstrap.cs" />
     <Compile Include="Model\Diff.cs" />
     <Compile Include="Model\Directory.cs" />
     <Compile Include="Model\Entry.cs" />
@@ -73,11 +72,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\packages\SSH.NET.2013.4.7\lib\net40\Renci.SshNet.dll">
-      <Link>Extern\Renci.SshNet.dll</Link>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

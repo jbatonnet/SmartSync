@@ -10,11 +10,6 @@ namespace SmartSync.Common
 {
     public abstract class Storage : IDisposable
     {
-        static Storage()
-        {
-            Bootstrap.Initialize();
-        }
-
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public string Name { get; set; }
         [EditorBrowsable(EditorBrowsableState.Advanced)]

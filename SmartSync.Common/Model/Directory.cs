@@ -101,19 +101,35 @@ namespace SmartSync.Common
 
         public Action GetAction(SyncType syncType)
         {
-            if (Left == null)
+            switch (syncType)
             {
-                if (syncType == SyncType.LeftToRight)
-                    return new DeleteDirectoryAction(Right);
-                else
-                    return new CreateDirectoryAction(leftStorage, rightDirectory.Parent.Path, rightDirectory.Name);
-            }
-            else if (Right == null)
-            {
-                if (syncType == SyncType.RightToleft)
-                    return new DeleteDirectoryAction(Left);
-                else
-                    return new CreateDirectoryAction(rightStorage, leftDirectory.Parent.Path, leftDirectory.Name);
+                case SyncType.Backup:
+                {
+                    if (Right == null)
+                        return new CreateDirectoryAction(RightStorage, Left.Parent.Path, Left.Name);
+
+                    break;
+                }
+
+                case SyncType.Clone:
+                {
+                    if (Left == null)
+                        return new DeleteDirectoryAction(Right);
+                    else if (Right == null)
+                        return new CreateDirectoryAction(RightStorage, Left.Parent.Path, Left.Name);
+
+                    break;
+                }
+
+                case SyncType.Sync:
+                {
+                    if (Left == null)
+                        return new CreateDirectoryAction(LeftStorage, Right.Parent.Path, Right.Name);
+                    else if (Right == null)
+                        return new CreateDirectoryAction(RightStorage, Left.Parent.Path, Left.Name);
+
+                    break;
+                }
             }
 
             return null;
