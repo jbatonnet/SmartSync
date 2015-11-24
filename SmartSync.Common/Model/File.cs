@@ -171,9 +171,9 @@ namespace SmartSync.Common
                         int diff = FileComparer.CompareFileDates(Left, Right);
 
                         if (diff > 0)
-                            return new CopyFileAction(Left, RightStorage, Left.Parent.Path, Left.Name);
+                            return new ReplaceFileAction(Left, Right);
                         else if (diff < 0)
-                            return new CopyFileAction(Right, LeftStorage, Right.Parent.Path, Right.Name);
+                            return new ReplaceFileAction(Right, Left);
                         else
                             throw new NotImplementedException("Files are different, but they have the same date");
                     }
