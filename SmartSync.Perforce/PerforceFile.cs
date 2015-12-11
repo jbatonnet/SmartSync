@@ -11,12 +11,16 @@ namespace SmartSync.Perforce
 {
     public class PerforceFile : BasicFile
     {
-        public PerforceFile(BasicStorage storage, FileInfo fileInfo) : base(storage, fileInfo) { }
+        private PerforceStorage storage;
+
+        public PerforceFile(PerforceStorage storage, FileInfo fileInfo) : base(storage, fileInfo)
+        {
+            this.storage = storage;
+        }
 
         public override Stream Open(FileAccess access)
         {
-            // TODO: Return a PerforceFileStream to detect modifications
-            return base.Open(access);
+            return new PerforceStream(storage, fileInfo.Open(FileMode.Open, access));
         }
     }
 }

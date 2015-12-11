@@ -66,7 +66,7 @@ namespace SmartSync.Common
         }
 
         private BasicStorage storage;
-        internal DirectoryInfo directoryInfo;
+        protected internal DirectoryInfo directoryInfo;
 
         public BasicDirectory(BasicStorage storage, DirectoryInfo directoryInfo)
         {

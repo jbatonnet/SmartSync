@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Profile>
+    <Properties>
+        <DiffType>Dates</DiffType>
+        <SyncType>Clone</SyncType>
+        <References>
+            <Assembly Path="SmartSync.Perforce.dll" />
+        </References>
+    </Properties>
+    <Left Type="SmartSync.Common.BasicStorage">
+        <Path>..\Samples\Left</Path>
+    </Left>
+    <Right Type="SmartSync.Perforce.PerforceStorage">
+        <Path>..\Samples\Right</Path>
+    </Right>
+</Profile>

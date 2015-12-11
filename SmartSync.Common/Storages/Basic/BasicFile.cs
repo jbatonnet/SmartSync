@@ -62,7 +62,7 @@ namespace SmartSync.Common
         }
 
         private BasicStorage storage;
-        internal FileInfo fileInfo;
+        protected internal FileInfo fileInfo;
 
         public BasicFile(BasicStorage storage, FileInfo fileInfo)
         {

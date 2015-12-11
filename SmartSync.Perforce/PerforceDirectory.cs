@@ -5,33 +5,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Perforce.P4;
+
 using SmartSync.Common;
 
 namespace SmartSync.Perforce
 {
     public class PerforceDirectory : BasicDirectory
     {
-        public PerforceDirectory(BasicStorage storage, DirectoryInfo directoryInfo) : base(storage, directoryInfo) { }
+        private PerforceStorage storage;
 
-        public override Common.Directory CreateDirectory(string name)
+        public PerforceDirectory(PerforceStorage storage, DirectoryInfo directoryInfo) : base(storage, directoryInfo)
         {
-            // TODO: Automatically mark for add
-            return base.CreateDirectory(name);
+            this.storage = storage;
         }
+
         public override Common.File CreateFile(string name)
         {
-            // TODO: Automatically mark for add
-            return base.CreateFile(name);
-        }
-        public override void DeleteDirectory(Common.Directory directory)
-        {
-            // TODO: Automatically mark for delete
-            base.DeleteDirectory(directory);
+            Common.File file = base.CreateFile(name);
+            if (file == null)
+                return null;
+
+            string path = System.IO.Path.Combine(directoryInfo.FullName, name);
+            storage.Connection.Client.AddFiles(null, new FileSpec(null, null, new LocalPath(path), VersionSpec.None));
+
+            return file;
         }
         public override void DeleteFile(Common.File file)
         {
-            // TODO: Automatically mark for delete
             base.DeleteFile(file);
+
+            // TODO: Mark for delete
         }
     }
 }
