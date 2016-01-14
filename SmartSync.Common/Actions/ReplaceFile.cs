@@ -22,7 +22,10 @@ namespace SmartSync.Common
         {
             using (Stream sourceStream = Source.Open(FileAccess.Read))
             using (Stream destinationStream = Destination.Open(FileAccess.Write))
+            {
+                destinationStream.SetLength(sourceStream.Length);
                 sourceStream.CopyTo(destinationStream);
+            }
 
             Destination.Date = Source.Date;
         }
