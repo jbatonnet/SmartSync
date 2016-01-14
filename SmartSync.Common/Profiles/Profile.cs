@@ -94,7 +94,7 @@ namespace SmartSync.Common
         {
             foreach (Directory subDirectory in directory.Directories)
             {
-                if (exclusions != null && exclusions.Any(e => MatchPattern(subDirectory.Path, e)))
+                if (exclusions != null && exclusions.Any(e => Storage.MatchPattern(subDirectory.Path, e)))
                     continue;
 
                 yield return subDirectory;
@@ -102,21 +102,6 @@ namespace SmartSync.Common
                 foreach (Directory subSubDirectory in GetSubDirectories(subDirectory, exclusions))
                     yield return subSubDirectory;
             }
-        }
-        protected static bool MatchPattern(string path, string pattern)
-        {
-            if (path == pattern)
-                return true;
-
-            // Escape characters
-            pattern = pattern.Replace(@"\", @"\\");
-            pattern = pattern.Replace(".", @"\.");
-
-            // Replace tokens
-            pattern = pattern.Replace("**", ".+");
-            pattern = pattern.Replace("*", @"[^\\/]+");
-
-            return Regex.IsMatch(path, pattern);
         }
         protected static IEnumerable<TResult> FullOuterJoin<TLeft, TRight, TKey, TResult>(IEnumerable<TLeft> left, IEnumerable<TRight> right, Func<TLeft, TKey> leftKeySelector, Func<TRight, TKey> rightKeySelector, Func<TLeft, TRight, TKey, TResult> projection, TLeft leftDefault = default(TLeft), TRight rightDefault = default(TRight), IEqualityComparer<TKey> keyComparer = null)
         {

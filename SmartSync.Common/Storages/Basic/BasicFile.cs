@@ -13,7 +13,7 @@ namespace SmartSync.Common
         {
             get
             {
-                return fileInfo.Name;
+                return FileInfo.Name;
             }
             set
             {
@@ -24,7 +24,7 @@ namespace SmartSync.Common
         {
             get
             {
-                return new BasicDirectory(storage, fileInfo.Directory);
+                return new BasicDirectory(storage, FileInfo.Directory);
             }
         }
         public override Storage Storage
@@ -39,18 +39,18 @@ namespace SmartSync.Common
         {
             get
             {
-                return fileInfo.LastWriteTime;
+                return FileInfo.LastWriteTime;
             }
             set
             {
-                fileInfo.LastWriteTime = value;
+                FileInfo.LastWriteTime = value;
             }
         }
         public override ulong Size
         {
             get
             {
-                return (ulong)fileInfo.Length;
+                return (ulong)FileInfo.Length;
             }
         }
         public override uint Hash
@@ -61,13 +61,13 @@ namespace SmartSync.Common
             }
         }
 
+        public FileInfo FileInfo { get; private set; }
         private BasicStorage storage;
-        protected internal FileInfo fileInfo;
 
         public BasicFile(BasicStorage storage, FileInfo fileInfo)
         {
             this.storage = storage;
-            this.fileInfo = fileInfo;
+            FileInfo = fileInfo;
         }
 
         public override Stream Open(FileAccess access)
@@ -81,7 +81,7 @@ namespace SmartSync.Common
                 case FileAccess.ReadWrite: share = FileShare.Read; break;
             }
 
-            return fileInfo.Open(FileMode.Open, access, share);
+            return FileInfo.Open(FileMode.Open, access, share);
         }
     }
 }

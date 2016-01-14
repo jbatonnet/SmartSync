@@ -72,7 +72,7 @@ namespace SmartSync.Common
         {
             foreach (Directory subDirectory in directory.Directories)
             {
-                if (exclusions != null && exclusions.Any(e => MatchPattern(subDirectory.Path, e)))
+                if (exclusions != null && exclusions.Any(e => MatchPattern(subDirectory.Path + "/", e)))
                     continue;
 
                 yield return subDirectory;
@@ -81,7 +81,7 @@ namespace SmartSync.Common
                     yield return subSubDirectory;
             }
         }
-        protected static bool MatchPattern(string path, string pattern)
+        public static bool MatchPattern(string path, string pattern)
         {
             if (path == pattern)
                 return true;
@@ -91,8 +91,9 @@ namespace SmartSync.Common
             pattern = pattern.Replace(".", @"\.");
 
             // Replace tokens
-            pattern = pattern.Replace("**", ".+");
-            pattern = pattern.Replace("*", @"[^\\/]+");
+            pattern = pattern.Replace("**", ".#"); // TODO: Find a better way to do this
+            pattern = pattern.Replace("*", @"[^\\/]*");
+            pattern = pattern.Replace(".#", ".*");
 
             return Regex.IsMatch(path, pattern);
         }

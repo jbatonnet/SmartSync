@@ -34,7 +34,7 @@ namespace SmartSync.Sftp
         {
             get
             {
-                throw new NotImplementedException();
+                return storage;
             }
         }
 

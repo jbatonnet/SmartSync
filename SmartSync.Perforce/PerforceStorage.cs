@@ -17,9 +17,9 @@ namespace SmartSync.Perforce
 
     public class PerforceStorage : BasicStorage
     {
-        private const string AddressKey = "P4HOST";
+        private const string AddressKey = "P4PORT";
         private const string UserKey = "P4USER";
-        private const string PasswordKey = "P4PASSWORD";
+        private const string PasswordKey = "P4PASSWD";
         private const string ClientKey = "P4CLIENT";
 
         public string Address { get; set; }
@@ -35,7 +35,7 @@ namespace SmartSync.Perforce
             get
             {
                 Initialize();
-                return base.Root;
+                return new PerforceDirectory(this, Path);
             }
         }
 
@@ -56,7 +56,7 @@ namespace SmartSync.Perforce
             #region Server information discovery
 
             // Get environment informations
-            if ((address ?? user ?? client) == null)
+            if (address == null)
             {
                 address = Environment.GetEnvironmentVariable(AddressKey);
                 user = Environment.GetEnvironmentVariable(UserKey);
@@ -65,9 +65,9 @@ namespace SmartSync.Perforce
             }
 
             // Try to find a p4config.txt file
-            if ((address ?? user ?? client) == null)
+            if (address == null)
             {
-                DirectoryInfo directory = new DirectoryInfo(Environment.CurrentDirectory);
+                DirectoryInfo directory = Path;
 
                 while (directory != null && !File.Exists(System.IO.Path.Combine(directory.FullName, "p4config.txt")))
                     directory = directory.Parent;
@@ -97,9 +97,9 @@ namespace SmartSync.Perforce
             }
 
             // Find the registry key
-            if ((address ?? user ?? client) == null)
+            if (address == null)
             {
-                RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Perforce\Environment");
+                RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Perforce\environment", false);
 
                 if (key != null)
                 {
@@ -143,6 +143,23 @@ namespace SmartSync.Perforce
 
             // Perform the connection
             Connection.Connect(options);
+        }
+
+        public override IEnumerable<Common.Directory> GetAllDirectories(string[] exclusions = null)
+        {
+            return base.GetAllDirectories(exclusions);
+        }
+        public override IEnumerable<Common.File> GetAllFiles(string[] exclusions = null)
+        {
+            return base.GetAllFiles(exclusions);
+        }
+        public override Common.Directory GetDirectory(string path)
+        {
+            return base.GetDirectory(path);
+        }
+        public override Common.File GetFile(string path)
+        {
+            return base.GetFile(path);
         }
     }
 }

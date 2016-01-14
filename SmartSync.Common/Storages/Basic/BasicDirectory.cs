@@ -13,7 +13,7 @@ namespace SmartSync.Common
         {
             get
             {
-                return directoryInfo.Name;
+                return DirectoryInfo.Name;
             }
             set
             {
@@ -24,10 +24,10 @@ namespace SmartSync.Common
         {
             get
             {
-                if (storage.Path.FullName == directoryInfo.FullName)
+                if (storage.Path.FullName == DirectoryInfo.FullName)
                     return null;
 
-                return new BasicDirectory(storage, directoryInfo.Parent);
+                return new BasicDirectory(storage, DirectoryInfo.Parent);
             }
         }
         public override Storage Storage
@@ -41,10 +41,10 @@ namespace SmartSync.Common
         {
             get
             {
-                if (storage.Path.FullName == directoryInfo.FullName)
+                if (storage.Path.FullName == DirectoryInfo.FullName)
                     return "/";
 
-                return directoryInfo.FullName.Substring(storage.Path.FullName.Length).Replace('\\', '/');
+                return DirectoryInfo.FullName.Substring(storage.Path.FullName.Length).Replace('\\', '/');
             }
         }
 
@@ -52,7 +52,7 @@ namespace SmartSync.Common
         {
             get
             {
-                foreach (DirectoryInfo directoryInfo in directoryInfo.EnumerateDirectories())
+                foreach (DirectoryInfo directoryInfo in DirectoryInfo.EnumerateDirectories())
                     yield return new BasicDirectory(storage, directoryInfo);
             }
         }
@@ -60,18 +60,18 @@ namespace SmartSync.Common
         {
             get
             {
-                foreach (FileInfo fileInfo in directoryInfo.EnumerateFiles())
+                foreach (FileInfo fileInfo in DirectoryInfo.EnumerateFiles())
                     yield return new BasicFile(storage, fileInfo);
             }
         }
 
+        public DirectoryInfo DirectoryInfo { get; private set; }
         private BasicStorage storage;
-        protected internal DirectoryInfo directoryInfo;
 
         public BasicDirectory(BasicStorage storage, DirectoryInfo directoryInfo)
         {
             this.storage = storage;
-            this.directoryInfo = directoryInfo;
+            DirectoryInfo = directoryInfo;
         }
 
         public override Directory CreateDirectory(string name)
@@ -79,7 +79,7 @@ namespace SmartSync.Common
             if (!Storage.IsNameValid(name))
                 throw new ArgumentException("The specified name contains invalid characters");
 
-            return new BasicDirectory(storage, directoryInfo.CreateSubdirectory(name));
+            return new BasicDirectory(storage, DirectoryInfo.CreateSubdirectory(name));
         }
         public override void DeleteDirectory(Directory directory)
         {
@@ -87,7 +87,7 @@ namespace SmartSync.Common
                 throw new ArgumentException("The specified directory could not be found");
 
             BasicDirectory basicDirectory = directory as BasicDirectory;
-            basicDirectory.directoryInfo.Delete(true);
+            basicDirectory.DirectoryInfo.Delete(true);
         }
 
         public override File CreateFile(string name)
@@ -95,7 +95,7 @@ namespace SmartSync.Common
             if (!Storage.IsNameValid(name))
                 throw new ArgumentException("The specified name contains invalid characters");
 
-            FileInfo fileInfo = new FileInfo(System.IO.Path.Combine(directoryInfo.FullName, name));
+            FileInfo fileInfo = new FileInfo(System.IO.Path.Combine(DirectoryInfo.FullName, name));
             fileInfo.Create().Close();
             return new BasicFile(storage, fileInfo);
         }
@@ -105,7 +105,7 @@ namespace SmartSync.Common
                 throw new ArgumentException("The specified file could not be found");
 
             BasicFile basicFile = file as BasicFile;
-            basicFile.fileInfo.Delete();
+            basicFile.FileInfo.Delete();
         }
     }
 }

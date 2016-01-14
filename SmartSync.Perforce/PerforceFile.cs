@@ -11,6 +11,18 @@ namespace SmartSync.Perforce
 {
     public class PerforceFile : BasicFile
     {
+        public override Common.Directory Parent
+        {
+            get
+            {
+                BasicDirectory parent = base.Parent as BasicDirectory;
+                if (parent == null)
+                    return null;
+
+                return new PerforceDirectory(storage, parent.DirectoryInfo);
+            }
+        }
+
         private PerforceStorage storage;
 
         public PerforceFile(PerforceStorage storage, FileInfo fileInfo) : base(storage, fileInfo)
@@ -20,7 +32,7 @@ namespace SmartSync.Perforce
 
         public override Stream Open(FileAccess access)
         {
-            return new PerforceStream(storage, fileInfo.Open(FileMode.Open, access));
+            return new PerforceStream(storage, FileInfo, FileInfo.Open(FileMode.Open, access));
         }
     }
 }

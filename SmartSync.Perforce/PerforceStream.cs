@@ -50,12 +50,14 @@ namespace SmartSync.Perforce
         }
 
         private PerforceStorage storage;
+        private FileInfo fileInfo;
         private Stream stream;
         private bool checkout = false;
 
-        public PerforceStream(PerforceStorage storage, Stream stream)
+        public PerforceStream(PerforceStorage storage, FileInfo fileInfo, Stream stream)
         {
             this.storage = storage;
+            this.fileInfo = fileInfo;
             this.stream = stream;
         }
 
@@ -93,7 +95,7 @@ namespace SmartSync.Perforce
             if (checkout)
                 return;
 
-            // TODO: storage.Connection.Client.EditFiles()
+            storage.Connection.Client.EditFiles(null, new global::Perforce.P4.FileSpec(null, null, new global::Perforce.P4.LocalPath(fileInfo.FullName), null));
 
             checkout = true;
         }
