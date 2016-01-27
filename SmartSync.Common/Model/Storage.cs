@@ -10,6 +10,9 @@ namespace SmartSync.Common
 {
     public abstract class Storage : IDisposable
     {
+        private static Dictionary<string, Predicate<string>> predicateCache = new Dictionary<string, Predicate<string>>();
+        private static Dictionary<string, Regex> regexCache = new Dictionary<string, Regex>();
+
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public string Name { get; set; }
         [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -86,16 +89,59 @@ namespace SmartSync.Common
             if (path == pattern)
                 return true;
 
-            // Escape characters
-            pattern = pattern.Replace(@"\", @"\\");
-            pattern = pattern.Replace(".", @"\.");
+            // Used cached predicate
+            Predicate<string> predicate;
+            if (predicateCache.TryGetValue(pattern, out predicate))
+                return predicate(path);
 
-            // Replace tokens
-            pattern = pattern.Replace("**", ".#"); // TODO: Find a better way to do this
-            pattern = pattern.Replace("*", @"[^\\/]*");
-            pattern = pattern.Replace(".#", ".*");
+            // Fast pattern matching
+            int tokenPosition = pattern.IndexOf("**");
+            if (tokenPosition >= 0)
+            {
+                // **XX**
+                if (tokenPosition == 0 && pattern.EndsWith("**") && pattern.IndexOf('*', 2) == pattern.Length - 2)
+                {
+                    string middle = pattern.Substring(2, pattern.Length - 4);
 
-            return Regex.IsMatch(path, pattern);
+                    predicate = p => p.Contains(middle);
+                    predicateCache.Add(pattern, predicate);
+                    return predicate(path);
+                }
+
+                // AA**BB
+                if (pattern.IndexOf('*') == tokenPosition && pattern.IndexOf('*', tokenPosition + 2) == -1)
+                {
+                    string left = pattern.Substring(0, tokenPosition);
+                    string right = pattern.Substring(tokenPosition + 2);
+
+                    predicate = p => p.StartsWith(left) && p.EndsWith(right);
+                    predicateCache.Add(pattern, predicate);
+                    return predicate(path);
+                }
+            }
+
+            // Default regex matching
+            Regex regex;
+            if (!regexCache.TryGetValue(pattern, out regex))
+            {
+                string regexPattern = pattern;
+
+                // Escape characters
+                regexPattern = regexPattern.Replace(@"\", @"\\");
+                regexPattern = regexPattern.Replace(".", @"\.");
+
+                // Replace tokens
+                regexPattern = regexPattern.Replace("**", ".#"); // TODO: Find a better way to do this
+                regexPattern = regexPattern.Replace("*", @"[^\\/]*");
+                regexPattern = regexPattern.Replace(".#", ".*");
+
+                regex = new Regex(regexPattern, RegexOptions.Compiled);
+                regexCache.Add(pattern, regex);
+            }
+
+            predicate = p => regex.IsMatch(p);
+            predicateCache.Add(pattern, predicate);
+            return predicate(path);
         }
     }
 }

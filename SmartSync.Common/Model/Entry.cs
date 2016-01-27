@@ -16,17 +16,24 @@ namespace SmartSync.Common
         {
             get
             {
-                if (Parent == null)
-                    return "/";
+                if (path == null)
+                {
+                    if (Parent == null)
+                        return "/";
 
-                string path = Parent.Path;
+                    string parentPath = Parent.Path;
 
-                if (path == "/")
-                    return "/" + Name;
-                else
-                    return path + "/" + Name;
+                    if (parentPath == "/")
+                        path = "/" + Name;
+                    else
+                        path = parentPath + "/" + Name;
+                }
+
+                return path;
             }
         }
+
+        private string path;
 
         public bool Equals(Entry other)
         {

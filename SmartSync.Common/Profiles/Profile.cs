@@ -83,6 +83,10 @@ namespace SmartSync.Common
             foreach (FileDiff fileDiff in fileDiffs)
                 yield return fileDiff;
         }
+        public virtual ReversedProfile Reverse()
+        {
+            return new ReversedProfile(this);
+        }
 
         public virtual void Dispose()
         {
@@ -116,6 +120,54 @@ namespace SmartSync.Common
                    from leftValue in leftLookup[key].DefaultIfEmpty(leftDefault)
                    from rightValue in rightLookup[key].DefaultIfEmpty(rightDefault)
                    select projection(leftValue, rightValue, key);
+        }
+    }
+
+    public class ReversedProfile : Profile
+    {
+        public override DiffType DiffType
+        {
+            get
+            {
+                return profile.DiffType;
+            }
+        }
+        public override SyncType SyncType
+        {
+            get
+            {
+                return profile.SyncType;
+            }
+        }
+
+        public override IEnumerable<string> Exclusions
+        {
+            get
+            {
+                return profile.Exclusions;
+            }
+        }
+
+        public override Storage Left
+        {
+            get
+            {
+                return profile.Right;
+            }
+        }
+        public override Storage Right
+        {
+            get
+            {
+                return profile.Left;
+            }
+        }
+
+        private Profile profile;
+
+        internal ReversedProfile(Profile profile)
+        {
+            this.profile = profile;
         }
     }
 }

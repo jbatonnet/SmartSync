@@ -69,6 +69,9 @@ namespace SmartSync.Engine
                 Log.Debug("");
             }
 
+            if (Options.ContainsKey("reverse"))
+                profile = profile.Reverse();
+
             // Display some profile informations
             Log.Info("Left  : {0}", profile.Left);
             Log.Info("Right : {0}", profile.Right);
@@ -103,7 +106,10 @@ namespace SmartSync.Engine
                 for (int i = 0; i < actions.Length; i++)
                 {
                     Log.Info("{1} % - {0} ...", actions[i], i * 100 / actions.Length);
+
+#if !DEBUG
                     actions[i].Process();
+#endif
                 }
 
                 Log.Info("Flushing data to storage ...");

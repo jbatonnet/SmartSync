@@ -27,7 +27,10 @@ namespace SmartSync.Common
                 if (storage.Path.FullName == DirectoryInfo.FullName)
                     return null;
 
-                return new BasicDirectory(storage, DirectoryInfo.Parent);
+                if (parent == null)
+                    parent = new BasicDirectory(storage, DirectoryInfo.Parent);
+
+                return parent;
             }
         }
         public override Storage Storage
@@ -53,7 +56,7 @@ namespace SmartSync.Common
             get
             {
                 foreach (DirectoryInfo directoryInfo in DirectoryInfo.EnumerateDirectories())
-                    yield return new BasicDirectory(storage, directoryInfo);
+                    yield return new BasicDirectory(storage, this, directoryInfo);
             }
         }
         public override IEnumerable<File> Files
@@ -61,16 +64,23 @@ namespace SmartSync.Common
             get
             {
                 foreach (FileInfo fileInfo in DirectoryInfo.EnumerateFiles())
-                    yield return new BasicFile(storage, fileInfo);
+                    yield return new BasicFile(storage, this, fileInfo);
             }
         }
 
         public DirectoryInfo DirectoryInfo { get; private set; }
+        private BasicDirectory parent;
         private BasicStorage storage;
 
         public BasicDirectory(BasicStorage storage, DirectoryInfo directoryInfo)
         {
             this.storage = storage;
+            DirectoryInfo = directoryInfo;
+        }
+        public BasicDirectory(BasicStorage storage, BasicDirectory parent, DirectoryInfo directoryInfo)
+        {
+            this.storage = storage;
+            this.parent = parent;
             DirectoryInfo = directoryInfo;
         }
 
