@@ -42,7 +42,7 @@ namespace SmartSync.Sftp
         {
             get
             {
-                foreach (Renci.SshNet.Sftp.SftpFile file in storage.Client.ListDirectory(directory.FullName))
+                foreach (Renci.SshNet.Sftp.SftpFile file in storage.SftpClient.ListDirectory(directory.FullName))
                 {
                     if (file.Name == "." || file.Name == "..")
                         continue;
@@ -56,7 +56,7 @@ namespace SmartSync.Sftp
         {
             get
             {
-                foreach (Renci.SshNet.Sftp.SftpFile file in storage.Client.ListDirectory(directory.FullName))
+                foreach (Renci.SshNet.Sftp.SftpFile file in storage.SftpClient.ListDirectory(directory.FullName))
                     if (file.Attributes.IsRegularFile)
                         yield return new SftpFile(storage, this, file);
             }
@@ -79,9 +79,9 @@ namespace SmartSync.Sftp
                 throw new ArgumentException("The specified name contains invalid characters");
 
             string path = directory.FullName + "/" + name;
-            storage.Client.CreateDirectory(path);
+            storage.SftpClient.CreateDirectory(path);
 
-            Renci.SshNet.Sftp.SftpFile result = storage.Client.Get(path);
+            Renci.SshNet.Sftp.SftpFile result = storage.SftpClient.Get(path);
             if (result == null)
                 throw new System.IO.IOException("Unable to create the specified directory");
 
@@ -93,7 +93,7 @@ namespace SmartSync.Sftp
                 throw new ArgumentException("The specified directory could not be found");
 
             string path = this.directory.FullName + "/" + directory.Name;
-            storage.Client.DeleteDirectory(path);
+            storage.SftpClient.DeleteDirectory(path);
         }
 
         public override File CreateFile(string name)
@@ -102,9 +102,9 @@ namespace SmartSync.Sftp
                 throw new ArgumentException("The specified name contains invalid characters");
 
             string path = directory.FullName + "/" + name;
-            storage.Client.Create(path).Close();
+            storage.SftpClient.Create(path).Close();
 
-            Renci.SshNet.Sftp.SftpFile result = storage.Client.Get(path);
+            Renci.SshNet.Sftp.SftpFile result = storage.SftpClient.Get(path);
             if (result == null)
                 throw new System.IO.IOException("Unable to create the specified file");
 
@@ -116,7 +116,7 @@ namespace SmartSync.Sftp
                 throw new ArgumentException("The specified file could not be found");
 
             string path = directory.FullName + "/" + file.Name;
-            storage.Client.DeleteFile(path);
+            storage.SftpClient.DeleteFile(path);
         }
     }
 }

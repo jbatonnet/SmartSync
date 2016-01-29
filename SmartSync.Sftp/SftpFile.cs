@@ -46,11 +46,11 @@ namespace SmartSync.Sftp
             }
             set
             {
-                Renci.SshNet.Sftp.SftpFileAttributes attributes = storage.Client.GetAttributes(file.FullName);
+                Renci.SshNet.Sftp.SftpFileAttributes attributes = storage.SftpClient.GetAttributes(file.FullName);
 
                 attributes.LastWriteTime = value;
 
-                storage.Client.SetAttributes(file.FullName, attributes);
+                storage.SftpClient.SetAttributes(file.FullName, attributes);
             }
         }
         public override ulong Size
@@ -81,7 +81,7 @@ namespace SmartSync.Sftp
 
         public override System.IO.Stream Open(System.IO.FileAccess access)
         {
-            return storage.Client.Open(file.FullName, System.IO.FileMode.Open, access);
+            return storage.SftpClient.Open(file.FullName, System.IO.FileMode.Open, access);
         }
     }
 }
