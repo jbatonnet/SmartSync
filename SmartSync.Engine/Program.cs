@@ -41,6 +41,8 @@ namespace SmartSync.Engine
                 Exit();
             }
 
+            Environment.CurrentDirectory = profileInfo.DirectoryName;
+
             Profile profile = null;
 
             // Load the profile
