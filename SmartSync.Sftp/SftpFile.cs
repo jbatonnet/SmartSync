@@ -84,4 +84,88 @@ namespace SmartSync.Sftp
             return storage.SftpClient.Open(file.FullName, System.IO.FileMode.Open, access);
         }
     }
+
+    public class SftpCachedFile : File
+    {
+        public override string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public override Directory Parent
+        {
+            get
+            {
+                return parent;
+            }
+        }
+        public override Storage Storage
+        {
+            get
+            {
+                return storage;
+            }
+        }
+
+        public override DateTime Date
+        {
+            get
+            {
+                return date;
+            }
+            set
+            {
+                Renci.SshNet.Sftp.SftpFileAttributes attributes = storage.SftpClient.GetAttributes(path);
+
+                attributes.LastWriteTime = value;
+                date = value;
+
+                storage.SftpClient.SetAttributes(path, attributes);
+            }
+        }
+        public override ulong Size
+        {
+            get
+            {
+                return size;
+            }
+        }
+        public override uint Hash
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private SftpStorage storage;
+        private SftpDirectory parent;
+
+        private string path;
+        private string name;
+        private ulong size;
+        private DateTime date;
+
+        public SftpCachedFile(SftpStorage storage, SftpDirectory parent, string path, string name, ulong size, DateTime date)
+        {
+            this.storage = storage;
+            this.parent = parent;
+
+            this.path = path;
+            this.name = name;
+            this.size = size;
+            this.date = date;
+        }
+
+        public override System.IO.Stream Open(System.IO.FileAccess access)
+        {
+            return storage.SftpClient.Open(path, System.IO.FileMode.Open, access);
+        }
+    }
 }
