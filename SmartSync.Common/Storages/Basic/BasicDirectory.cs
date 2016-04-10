@@ -55,16 +55,32 @@ namespace SmartSync.Common
         {
             get
             {
-                foreach (DirectoryInfo directoryInfo in DirectoryInfo.EnumerateDirectories())
-                    yield return new BasicDirectory(storage, this, directoryInfo);
+                if (storage.UseCache)
+                {
+                    foreach (DirectoryInfo directoryInfo in DirectoryInfo.GetDirectories())
+                        yield return new BasicDirectory(storage, this, directoryInfo);
+                }
+                else
+                {
+                    foreach (DirectoryInfo directoryInfo in DirectoryInfo.EnumerateDirectories())
+                        yield return new BasicDirectory(storage, this, directoryInfo);
+                }
             }
         }
         public override IEnumerable<File> Files
         {
             get
             {
-                foreach (FileInfo fileInfo in DirectoryInfo.EnumerateFiles())
-                    yield return new BasicFile(storage, this, fileInfo);
+                if (storage.UseCache)
+                {
+                    foreach (FileInfo fileInfo in DirectoryInfo.GetFiles())
+                        yield return new BasicFile(storage, this, fileInfo);
+                }
+                else
+                {
+                    foreach (FileInfo fileInfo in DirectoryInfo.EnumerateFiles())
+                        yield return new BasicFile(storage, this, fileInfo);
+                }
             }
         }
 

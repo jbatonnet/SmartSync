@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace SmartSync.Common
 {
+    [Serializable]
     public abstract class Storage : IDisposable
     {
         private static Dictionary<string, Predicate<string>> predicateCache = new Dictionary<string, Predicate<string>>();

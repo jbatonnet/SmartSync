@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace SmartSync.Common
 {
+    [Serializable]
     public class BasicStorage : Storage
     {
         public DirectoryInfo Path { get; set; }
@@ -17,6 +18,7 @@ namespace SmartSync.Common
                 return new BasicDirectory(this, Path);
             }
         }
+        public bool UseCache { get; set; } = false;
 
         public BasicStorage() { }
         public BasicStorage(DirectoryInfo path)
