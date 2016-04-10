@@ -119,4 +119,113 @@ namespace SmartSync.Sftp
             storage.SftpClient.DeleteFile(path);
         }
     }
+
+    public class SftpCachedDirectory : Directory
+    {
+        public override string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public override Directory Parent
+        {
+            get
+            {
+                return parent;
+            }
+        }
+        public override Storage Storage
+        {
+            get
+            {
+                return storage;
+            }
+        }
+
+        public override IEnumerable<Directory> Directories
+        {
+            get
+            {
+                return directories;
+            }
+        }
+        public override IEnumerable<File> Files
+        {
+            get
+            {
+                return files;
+            }
+        }
+
+        internal SftpStorage storage;
+        internal Directory parent;
+
+        private string path;
+        private string name;
+        internal List<SftpCachedDirectory> directories;
+        internal List<SftpCachedFile> files;
+
+        public SftpCachedDirectory(SftpStorage storage, Directory parent, string path, string name)
+        {
+            this.storage = storage;
+            this.parent = parent;
+
+            this.path = path;
+            this.name = name;
+            this.directories = new List<SftpCachedDirectory>();
+            this.files = new List<SftpCachedFile>();
+        }
+
+        public override Directory CreateDirectory(string name)
+        {
+            if (!Storage.IsNameValid(name))
+                throw new ArgumentException("The specified name contains invalid characters");
+
+            string path = this.path + "/" + name;
+            storage.SftpClient.CreateDirectory(path);
+
+            Renci.SshNet.Sftp.SftpFile result = storage.SftpClient.Get(path);
+            if (result == null)
+                throw new System.IO.IOException("Unable to create the specified directory");
+
+            return null; // new SftpDirectory(storage, this, result); // FIXME: Generate cached directory
+        }
+        public override void DeleteDirectory(Directory directory)
+        {
+            if (!directory.Parent.Equals(this))
+                throw new ArgumentException("The specified directory could not be found");
+
+            string path = this.path + "/" + directory.Name;
+            storage.SftpClient.DeleteDirectory(path);
+        }
+
+        public override File CreateFile(string name)
+        {
+            if (!Storage.IsNameValid(name))
+                throw new ArgumentException("The specified name contains invalid characters");
+
+            string path = this.path + "/" + name;
+            storage.SftpClient.Create(path).Close();
+
+            Renci.SshNet.Sftp.SftpFile result = storage.SftpClient.Get(path);
+            if (result == null)
+                throw new System.IO.IOException("Unable to create the specified file");
+
+            return null; // new SftpFile(storage, this, result); // FIXME: Generate cached file
+        }
+        public override void DeleteFile(File file)
+        {
+            if (!file.Parent.Equals(this))
+                throw new ArgumentException("The specified file could not be found");
+
+            string path = this.path + "/" + file.Name;
+            storage.SftpClient.DeleteFile(path);
+        }
+    }
 }

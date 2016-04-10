@@ -27,6 +27,15 @@ namespace SmartSync.Engine
             Parameters = args.Where(a => !a.StartsWith("/"))
                              .ToList();
 
+            // Break if asked
+            if (Options.ContainsKey("debug"))
+            {
+                if (Debugger.IsAttached)
+                    Debugger.Break();
+                else
+                    Debugger.Launch();
+            }
+
             string profilePath = Parameters.FirstOrDefault();
             if (profilePath == null)
             {
@@ -91,7 +100,7 @@ namespace SmartSync.Engine
                 differences = profile.GetDifferences().ToArray();
 
                 Log.Info("Computing actions to perform ...");
-                actions = differences.Select(d => d.GetAction(profile.SyncType)).ToArray();
+                actions = differences.Select(d => d.GetAction(profile.SyncType)).Sort().ToArray();
 
                 Log.Info("");
             }
@@ -105,7 +114,7 @@ namespace SmartSync.Engine
             if (actions.Length > 0)
             {
                 // Show actions to validate sync
-                if (!Options.ContainsKey("novalidate"))
+                if (!Options.ContainsKey("novalidate") && Log.Verbosity <= LogVerbosity.Info)
                 {
                     Log.Info("{0} actions to process ...", actions.Length);
 
@@ -118,9 +127,10 @@ namespace SmartSync.Engine
                         "o", "y", "oui", "ok", "yes", "yep", "yeah",
                         "n", "no", "non", "nope", "nop", "nah"
                     };
+
                     while (!answers.Contains(input.ToLower()))
                     {
-                        Console.Write("Do you want to process these actions ? ");
+                        Log.Info("Do you want to process these actions ? ");
                         input = Console.ReadLine();
                     }
 
@@ -137,7 +147,16 @@ namespace SmartSync.Engine
                 for (int i = 0; i < actions.Length; i++)
                 {
                     Log.Info("{1} % - {0} ...", actions[i], i * 100 / actions.Length);
-                    actions[i].Process();
+
+                    try
+                    {
+                        actions[i].Process();
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("Error while processing action {0}. {1}", actions[i], e.Message);
+                        Exit();
+                    }
                 }
 
                 Log.Info("Flushing data to storage ...");

@@ -58,7 +58,7 @@ namespace SmartSync.Sftp
             SftpClient.Connect();
 
             // Try to setup a ssh connection to speedup file listing
-            /*try
+            try
             {
                 SshClient = new SshClient(Host, Port, User, Password);
                 SshClient.Connect();
@@ -66,60 +66,102 @@ namespace SmartSync.Sftp
             catch
             {
                 SshClient = null;
-            }*/
+            }
         }
 
         public override IEnumerable<Directory> GetAllDirectories(string[] exclusions = null)
         {
             Initialize();
 
-            //if (SshClient == null)
+            if (true) // SshClient == null)
             {
                 foreach (Directory directory in base.GetAllDirectories(exclusions))
                     yield return directory;
 
                 yield break;
             }
-
-            /*SshCommand command = SshClient.RunCommand("ls -alR " + Path);
-            if (command.ExitStatus != 0)
+            else
             {
-                foreach (Directory directory in base.GetAllDirectories(exclusions))
-                    yield return directory;
-
-                yield break;
-            }
-            
-            using (System.IO.StringReader reader = new System.IO.StringReader(command.Result))
-            {
-                Dictionary<string, SftpDirectory> directories = new Dictionary<string, SftpDirectory>();
-
-                while (true)
+                SshCommand command = SshClient.RunCommand("ls -alR " + Path);
+                if (command.ExitStatus != 0)
                 {
-                    string line = reader.ReadLine();
-                    if (line == null)
-                        break;
-                    if (!line.EndsWith(":"))
-                        continue;
+                    foreach (Directory directory in base.GetAllDirectories(exclusions))
+                        yield return directory;
 
-                    string path = Combine(Path, line.Remove(line.Length - 1));
-                    SftpDirectory directory;
-
-                    if (path == Path)
-                    {
-                        directory = new SftpDirectory(this, null, SftpClient.Get(path));
-                        directories.Add(path, directory);
-                        continue;
-                    }
-
-                    string parentPath = Combine(path, "..");
-                    SftpDirectory parent = directories[parentPath];
-
-                    directory = new SftpDirectory(this, parent, SftpClient.Get(path));
-                    directories.Add(path, directory);
-                    yield return directory;
+                    yield break;
                 }
-            }*/
+
+                // Command output lokks like this block
+                //   /data/sync/projects/TramUrWay/TramUrWay.Android/obj/Debug/resourcecache/A749388BD973E6B4D7AC19568DB99B28:
+                //   total 1016
+                //   drwxrwxrwx 1 pi pi    4096 Apr  7 14:10 .
+                //   drwxrwxrwx 1 pi pi    4096 Apr  7 14:10 ..
+                //   drwxrwxrwx 1 pi pi       0 Apr  7 14:11 aapt
+                //   drwxrwxrwx 1 pi pi       0 Apr  7 14:11 aidl
+                //   -rwxrwxrwx 1 pi pi     852 Apr  7 09:34 AndroidManifest.xml
+                //   -rwxrwxrwx 1 pi pi    4047 Apr  7 09:34 annotations.zip
+                //   drwxrwxrwx 1 pi pi       0 Apr  7 14:10 assets
+                //   -rwxrwxrwx 1 pi pi 1022851 Apr  7 09:34 classes.jar
+                //   drwxrwxrwx 1 pi pi       0 Apr  7 14:11 libs
+                //   drwxrwxrwx 1 pi pi       0 Apr  7 14:10 res
+
+                using (System.IO.StringReader reader = new System.IO.StringReader(command.Result))
+                {
+                    Dictionary<string, SftpCachedDirectory> directories = new Dictionary<string, SftpCachedDirectory>();
+
+                    while (true)
+                    {
+                        string line = reader.ReadLine();
+                        if (line == null)
+                            break;
+                        if (!line.EndsWith(":"))
+                            continue;
+
+                        string path = Combine(Path, line.Remove(line.Length - 1));
+                        string name = System.IO.Path.GetFileName(path);
+                        SftpCachedDirectory directory;
+
+                        // Root directory
+                        if (path == Path)
+                        {
+                            directory = new SftpCachedDirectory(this, null, path, name);
+                            directories.Add(path, directory);
+                            yield return directory;
+                            continue;
+                        }
+
+                        // Children directories
+                        string parentPath = Combine(path, "..");
+                        SftpCachedDirectory parent = directories[parentPath];
+
+                        directory = new SftpCachedDirectory(this, parent, path, name);
+                        directories.Add(path, directory);
+                        parent.directories.Add(directory);
+
+                        if (exclusions != null && exclusions.Any(e => MatchPattern(path + "/", e)))
+                            continue;
+                        yield return directory;
+
+                        // Files
+                        while (true)
+                        {
+                            line = reader.ReadLine();
+                            if (string.IsNullOrWhiteSpace(line))
+                                break;
+                            if (line.StartsWith("total"))
+                                continue;
+                            if (line.StartsWith("d"))
+                                continue;
+
+                            string[] parts = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (parts.Length < 9)
+                                continue;
+
+                            //string name = 
+                        }
+                    }
+                }
+            }
         }
         private static string Combine(string left, string right)
         {
