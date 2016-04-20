@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SmartSync.Common
 {
     [Serializable]
-    public abstract class Storage : IDisposable
+    public abstract class Storage : MarshalByRefObject, IDisposable
     {
         private static Dictionary<string, Predicate<string>> predicateCache = new Dictionary<string, Predicate<string>>();
         private static Dictionary<string, Regex> regexCache = new Dictionary<string, Regex>();
