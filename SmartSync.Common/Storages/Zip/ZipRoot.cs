@@ -106,23 +106,31 @@ namespace SmartSync.Common
         public override Directory CreateDirectory(string name)
         {
             ZipArchiveEntry entry = storage.Archive.CreateEntry(name + "/");
+
+            storage.Modified = true;
             return new ZipDirectory(storage, this, entry);
         }
         public override void DeleteDirectory(Directory directory)
         {
             ZipDirectory zipDirectory = directory as ZipDirectory;
             zipDirectory.directory.Delete();
+
+            storage.Modified = true;
         }
 
         public override File CreateFile(string name)
         {
             ZipArchiveEntry entry = storage.Archive.CreateEntry(name, storage.Compression);
+
+            storage.Modified = true;
             return new ZipFile(storage, this, entry);
         }
         public override void DeleteFile(File file)
         {
             ZipFile zipFile = file as ZipFile;
             zipFile.file.Delete();
+
+            storage.Modified = true;
         }
     }
 }

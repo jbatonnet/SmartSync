@@ -24,6 +24,7 @@ namespace SmartSync.Common
         }
 
         internal ZipArchive Archive { get; private set; }
+        internal bool Modified { get; set; } = false;
 
         private File zipFile;
         private Stream zipStream;
@@ -113,7 +114,7 @@ namespace SmartSync.Common
 
         public override void Dispose()
         {
-            if (Archive != null)
+            if (Archive != null && Modified)
                 Archive.Dispose();
         }
 

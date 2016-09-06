@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SmartSync.Common
 {
-    public abstract class Entry : IEquatable<Entry>
+    public abstract class Entry : MarshalByRefObject, IEquatable<Entry>
     {
         public abstract string Name { get; set; }
         public abstract Directory Parent { get; }

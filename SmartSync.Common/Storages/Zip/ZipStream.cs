@@ -80,11 +80,15 @@ namespace SmartSync.Common
         {
             bytesToFlush += Math.Abs(Length - value);
             stream.SetLength(value);
+
+            storage.Modified = true;
         }
         public override void Write(byte[] buffer, int offset, int count)
         {
             stream.Write(buffer, offset, count);
             bytesToFlush += count;
+
+            storage.Modified = true;
         }
 
         protected override void Dispose(bool disposing)

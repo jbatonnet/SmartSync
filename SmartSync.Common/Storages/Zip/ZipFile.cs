@@ -47,6 +47,7 @@ namespace SmartSync.Common
             {
                 Update();
                 file.LastWriteTime = new DateTimeOffset(value);
+                storage.Modified = true;
             }
         }
         public override ulong Size

@@ -95,6 +95,9 @@ namespace SmartSync.OneDrive
 
         protected override void Dispose(bool disposing)
         {
+            if (dataStream == null)
+                return;
+
             base.Dispose(disposing);
 
             if (written)
@@ -106,6 +109,7 @@ namespace SmartSync.OneDrive
             }
 
             dataStream.Dispose();
+            dataStream = null;
         }
     }
 }

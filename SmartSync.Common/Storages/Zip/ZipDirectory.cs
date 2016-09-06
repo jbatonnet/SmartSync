@@ -134,6 +134,7 @@ namespace SmartSync.Common
             if (entry == null)
                 throw new System.IO.IOException("Unable to create the specified directory");
 
+            storage.Modified = true;
             return new ZipDirectory(storage, this, entry);
         }
         public override void DeleteDirectory(Directory directory)
@@ -143,6 +144,8 @@ namespace SmartSync.Common
 
             ZipDirectory zipDirectory = directory as ZipDirectory;
             zipDirectory.directory.Delete();
+
+            storage.Modified = true;
         }
 
         public override File CreateFile(string name)
@@ -154,6 +157,7 @@ namespace SmartSync.Common
             if (entry == null)
                 throw new System.IO.IOException("Unable to create the specified file");
 
+            storage.Modified = true;
             return new ZipFile(storage, this, entry);
         }
         public override void DeleteFile(File file)
@@ -163,6 +167,8 @@ namespace SmartSync.Common
 
             ZipFile zipFile = file as ZipFile;
             zipFile.file.Delete();
+
+            storage.Modified = true;
         }
     }
 }
