@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace SmartSync.Common
 {
+    using File = Bedrock.Common.File;
+
     public class ReplaceFileAction : Action
     {
         public File Source { get; private set; }

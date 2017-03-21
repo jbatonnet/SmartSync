@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SmartSync.Common</RootNamespace>
     <AssemblyName>SmartSync.Common</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -54,9 +55,7 @@
     <Compile Include="Actions\ReplaceFile.cs" />
     <Compile Include="Model\Diff.cs" />
     <Compile Include="Model\Directory.cs" />
-    <Compile Include="Model\Entry.cs" />
     <Compile Include="Model\File.cs" />
-    <Compile Include="Model\Storage.cs" />
     <Compile Include="Profiles\BasicProfile.cs" />
     <Compile Include="Profiles\Profile.cs" />
     <Compile Include="Profiles\XProfile.cs" />
@@ -72,6 +71,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\External\Bedrock\Bedrock.Common\Bedrock.Common.csproj">
+      <Project>{1dd53bde-0d9c-43c4-ae48-3a669e55261a}</Project>
+      <Name>Bedrock.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

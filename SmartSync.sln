@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.Common", "SmartSync.Common\SmartSync.Common.csproj", "{66FC3CA1-E596-4C66-A8EA-46169662B0EA}"
 EndProject
@@ -33,6 +33,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.Sftp", "SmartSync
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.Perforce", "SmartSync.Perforce\SmartSync.Perforce.csproj", "{492310DB-04BD-40FC-9EFC-02E7ACD649AC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{6EC22DE0-9AA3-43D6-9BFE-76AE51E0D202}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bedrock.Common", "External\Bedrock\Bedrock.Common\Bedrock.Common.csproj", "{1DD53BDE-0D9C-43C4-AE48-3A669E55261A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.Common", "External\Utilities\Common\Utilities.Common.csproj", "{50730BD9-8439-4180-87DA-E2EDECD1B226}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.Remoting", "External\Utilities\Remoting\Utilities.Remoting.csproj", "{77467D24-F013-438F-AD74-5D7ADDFA5E48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.Remoting.Http", "External\Utilities\Remoting.Http\Utilities.Remoting.Http.csproj", "{18D3636D-E0FC-4F93-A468-C77449C65031}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +73,22 @@ Global
 		{492310DB-04BD-40FC-9EFC-02E7ACD649AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{492310DB-04BD-40FC-9EFC-02E7ACD649AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{492310DB-04BD-40FC-9EFC-02E7ACD649AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DD53BDE-0D9C-43C4-AE48-3A669E55261A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DD53BDE-0D9C-43C4-AE48-3A669E55261A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DD53BDE-0D9C-43C4-AE48-3A669E55261A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DD53BDE-0D9C-43C4-AE48-3A669E55261A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50730BD9-8439-4180-87DA-E2EDECD1B226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50730BD9-8439-4180-87DA-E2EDECD1B226}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50730BD9-8439-4180-87DA-E2EDECD1B226}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50730BD9-8439-4180-87DA-E2EDECD1B226}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77467D24-F013-438F-AD74-5D7ADDFA5E48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77467D24-F013-438F-AD74-5D7ADDFA5E48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77467D24-F013-438F-AD74-5D7ADDFA5E48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77467D24-F013-438F-AD74-5D7ADDFA5E48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18D3636D-E0FC-4F93-A468-C77449C65031}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18D3636D-E0FC-4F93-A468-C77449C65031}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18D3636D-E0FC-4F93-A468-C77449C65031}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18D3636D-E0FC-4F93-A468-C77449C65031}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,5 +98,9 @@ Global
 		{BDD48D2C-E69A-4F60-89B6-23CAB63F69A5} = {20D060A3-9F49-4ECD-96DC-6E05CD186420}
 		{E7FD137C-61E9-4999-9C84-04DE3BA418BF} = {20D060A3-9F49-4ECD-96DC-6E05CD186420}
 		{492310DB-04BD-40FC-9EFC-02E7ACD649AC} = {20D060A3-9F49-4ECD-96DC-6E05CD186420}
+		{1DD53BDE-0D9C-43C4-AE48-3A669E55261A} = {6EC22DE0-9AA3-43D6-9BFE-76AE51E0D202}
+		{50730BD9-8439-4180-87DA-E2EDECD1B226} = {6EC22DE0-9AA3-43D6-9BFE-76AE51E0D202}
+		{77467D24-F013-438F-AD74-5D7ADDFA5E48} = {6EC22DE0-9AA3-43D6-9BFE-76AE51E0D202}
+		{18D3636D-E0FC-4F93-A468-C77449C65031} = {6EC22DE0-9AA3-43D6-9BFE-76AE51E0D202}
 	EndGlobalSection
 EndGlobal

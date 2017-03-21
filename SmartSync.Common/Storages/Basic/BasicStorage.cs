@@ -5,8 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Bedrock.Common;
+
 namespace SmartSync.Common
 {
+    using Directory = Bedrock.Common.Directory;
+
     [Serializable]
     public class BasicStorage : Storage
     {

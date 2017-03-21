@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Bedrock.Common;
+
 namespace SmartSync.Common
 {
     public class ZipRoot : Directory

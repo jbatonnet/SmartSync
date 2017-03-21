@@ -145,14 +145,14 @@ namespace SmartSync.Sftp
         }
 
         private SftpStorage storage;
-        private SftpDirectory parent;
+        private SftpCachedDirectory parent;
 
         private string path;
         private string name;
         private ulong size;
         private DateTime date;
 
-        public SftpCachedFile(SftpStorage storage, SftpDirectory parent, string path, string name, ulong size, DateTime date)
+        public SftpCachedFile(SftpStorage storage, SftpCachedDirectory parent, string path, string name, ulong size, DateTime date)
         {
             this.storage = storage;
             this.parent = parent;

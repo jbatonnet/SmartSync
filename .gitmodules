@@ -1,0 +1,6 @@
+[submodule "External/Utilities"]
+	path = External/Utilities
+	url = https://github.com/jbatonnet/utilities
+[submodule "External/Bedrock"]
+	path = External/Bedrock
+	url = https://TheDju@bitbucket.org/TheDju/bedrock.git

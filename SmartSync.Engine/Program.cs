@@ -141,6 +141,8 @@ namespace SmartSync.Engine
                     }
                 }
 
+                profile.Right.BeginSync();
+
                 Log.Info("Processing {0} actions ...", actions.Length);
 
                 // Process actions
@@ -158,6 +160,8 @@ namespace SmartSync.Engine
                         Exit();
                     }
                 }
+
+                profile.Right.EndSync();
 
                 Log.Info("Flushing data to storage ...");
                 Log.Info("");

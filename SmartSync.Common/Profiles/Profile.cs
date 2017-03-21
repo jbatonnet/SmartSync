@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+using Bedrock.Common;
+
 namespace SmartSync.Common
 {
     public enum DiffType

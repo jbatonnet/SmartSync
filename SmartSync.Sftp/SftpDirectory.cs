@@ -166,7 +166,7 @@ namespace SmartSync.Sftp
         internal SftpStorage storage;
         internal Directory parent;
 
-        private string path;
+        internal string path;
         private string name;
         internal List<SftpCachedDirectory> directories;
         internal List<SftpCachedFile> files;

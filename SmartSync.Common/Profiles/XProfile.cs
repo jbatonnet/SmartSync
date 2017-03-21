@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
+using Bedrock.Common;
+
 namespace SmartSync.Common
 {
     public class XProfile : Profile
@@ -164,7 +166,10 @@ namespace SmartSync.Common
                 if (property.PropertyType == typeof(Storage) || property.PropertyType.IsSubclassOf(typeof(Storage)))
                     value = ReadStorage(propertyElement);
                 else if (property.PropertyType == typeof(object) || property.PropertyType == typeof(string))
-                    value = propertyElement.Value;
+                {
+                    value = propertyElement.Value
+                        .Replace("%Date%", DateTime.Now.ToString("yyyy-MM-dd"));
+                }
                 else
                 {
                     try
@@ -175,6 +180,7 @@ namespace SmartSync.Common
                             value = converter.ConvertFromString(propertyElement.Value);
                         else
                             value = Activator.CreateInstance(property.PropertyType, propertyElement.Value);
+
                     }
                     catch
                     {

@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 using SmartSync.Common;
 
 using Renci.SshNet;
+using System.Text.RegularExpressions;
 
 namespace SmartSync.Sftp
 {
     public class SftpStorage : Storage
     {
+        private static Regex filePattern = new Regex(@"^(?<Permissions>[-drwx]{10})\s+[^\s]+\s+(?<User>[^\s]+)\s+(?<Group>[^\s]+)\s+(?<Size>[^\s]+)\s+(?<Date>[0-9-]{10} [0-9:.]+ [0-9+]+)\s+(?<Name>.+)$", RegexOptions.Compiled);
+
         public string Host { get; set; }
         public ushort Port { get; set; } = 22;
 
@@ -19,6 +22,8 @@ namespace SmartSync.Sftp
         public string Password { get; set; }
 
         public string Path { get; set; } = "/";
+
+        public string PostSync { get; set; }
 
         public override Directory Root
         {
@@ -73,96 +78,113 @@ namespace SmartSync.Sftp
         {
             Initialize();
 
-            if (true) // SshClient == null)
+            if (SshClient == null)
             {
                 foreach (Directory directory in base.GetAllDirectories(exclusions))
                     yield return directory;
 
                 yield break;
             }
-            else
+
+            SshCommand command = SshClient.RunCommand("ls -alR --time-style=full-iso " + Path);
+            if (command.ExitStatus < 0)
             {
-                SshCommand command = SshClient.RunCommand("ls -alR " + Path);
-                if (command.ExitStatus != 0)
+                foreach (Directory directory in base.GetAllDirectories(exclusions))
+                    yield return directory;
+
+                yield break;
+            }
+
+            // Command output looks like this block
+            //   /data/web/julien/www/Content:
+            //   total 12
+            //   drwxr-xr-x 3 pi pi 4096 2016-11-01 17:01:38.064671398 +0100 .
+            //   drwxr-xr-x 9 pi pi 4096 2016-11-01 17:03:46.933370227 +0100 ..
+            //   drwxr-xr-x 2 pi pi 4096 2016-11-01 17:01:54.284507630 +0100 Articles
+            //   
+            //   /data/web/julien/www/Content/Articles:
+            //   total 72
+            //   drwxr-xr-x 2 pi pi  4096 2016-11-01 17:01:54.284507630 +0100 .
+            //   drwxr-xr-x 3 pi pi  4096 2016-11-01 17:01:38.064671398 +0100 ..
+            //   -rw-r--r-- 1 pi pi 13414 2016-10-23 19:27:41.000000000 +0200 c-sharp-utilisation-linq.md
+            //   -rw-r--r-- 1 pi pi 21944 2016-10-23 19:28:37.000000000 +0200 interoperabilite-systemes.md
+            //   -rw-r--r-- 1 pi pi 11665 2016-10-27 22:38:12.000000000 +0200 securite-les-injections-sql.md
+            //   -rw-r--r-- 1 pi pi  8651 2016-10-23 19:28:04.000000000 +0200 unification-contenu-fournisseur.md
+
+            List<Directory> result = new List<Directory>();
+
+            using (System.IO.StringReader reader = new System.IO.StringReader(command.Result))
+            {
+                Dictionary<string, SftpCachedDirectory> directories = new Dictionary<string, SftpCachedDirectory>();
+
+                while (true)
                 {
-                    foreach (Directory directory in base.GetAllDirectories(exclusions))
-                        yield return directory;
+                    string line = reader.ReadLine();
+                    if (line == null)
+                        break;
+                    if (!line.EndsWith(":"))
+                        continue;
 
-                    yield break;
-                }
+                    string path = Combine(Path, line.Remove(line.Length - 1));
+                    string name = System.IO.Path.GetFileName(path);
+                    SftpCachedDirectory directory;
 
-                // Command output lokks like this block
-                //   /data/sync/projects/TramUrWay/TramUrWay.Android/obj/Debug/resourcecache/A749388BD973E6B4D7AC19568DB99B28:
-                //   total 1016
-                //   drwxrwxrwx 1 pi pi    4096 Apr  7 14:10 .
-                //   drwxrwxrwx 1 pi pi    4096 Apr  7 14:10 ..
-                //   drwxrwxrwx 1 pi pi       0 Apr  7 14:11 aapt
-                //   drwxrwxrwx 1 pi pi       0 Apr  7 14:11 aidl
-                //   -rwxrwxrwx 1 pi pi     852 Apr  7 09:34 AndroidManifest.xml
-                //   -rwxrwxrwx 1 pi pi    4047 Apr  7 09:34 annotations.zip
-                //   drwxrwxrwx 1 pi pi       0 Apr  7 14:10 assets
-                //   -rwxrwxrwx 1 pi pi 1022851 Apr  7 09:34 classes.jar
-                //   drwxrwxrwx 1 pi pi       0 Apr  7 14:11 libs
-                //   drwxrwxrwx 1 pi pi       0 Apr  7 14:10 res
-
-                using (System.IO.StringReader reader = new System.IO.StringReader(command.Result))
-                {
-                    Dictionary<string, SftpCachedDirectory> directories = new Dictionary<string, SftpCachedDirectory>();
-
-                    while (true)
+                    // Root directory
+                    if (path == Path)
                     {
-                        string line = reader.ReadLine();
-                        if (line == null)
-                            break;
-                        if (!line.EndsWith(":"))
-                            continue;
-
-                        string path = Combine(Path, line.Remove(line.Length - 1));
-                        string name = System.IO.Path.GetFileName(path);
-                        SftpCachedDirectory directory;
-
-                        // Root directory
-                        if (path == Path)
-                        {
-                            directory = new SftpCachedDirectory(this, null, path, name);
-                            directories.Add(path, directory);
-                            yield return directory;
-                            continue;
-                        }
-
-                        // Children directories
-                        string parentPath = Combine(path, "..");
-                        SftpCachedDirectory parent = directories[parentPath];
-
-                        directory = new SftpCachedDirectory(this, parent, path, name);
+                        directory = new SftpCachedDirectory(this, null, path, name);
                         directories.Add(path, directory);
-                        parent.directories.Add(directory);
 
-                        if (exclusions != null && exclusions.Any(e => MatchPattern(path + "/", e)))
-                            continue;
+                        PopulateFiles(directory, reader);
                         yield return directory;
 
-                        // Files
-                        while (true)
-                        {
-                            line = reader.ReadLine();
-                            if (string.IsNullOrWhiteSpace(line))
-                                break;
-                            if (line.StartsWith("total"))
-                                continue;
-                            if (line.StartsWith("d"))
-                                continue;
-
-                            string[] parts = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                            if (parts.Length < 9)
-                                continue;
-
-                            //string name = 
-                        }
+                        continue;
                     }
+
+                    // Children directories
+                    string parentPath = Combine(path, "..");
+                    SftpCachedDirectory parent = directories[parentPath];
+
+                    directory = new SftpCachedDirectory(this, parent, path, name);
+                    directories.Add(path, directory);
+                    parent.directories.Add(directory);
+
+                    path = directory.Path + "/";
+                    if (exclusions != null && exclusions.Any(e => MatchPattern(path, e)))
+                        continue;
+
+                    PopulateFiles(directory, reader);
+                    yield return directory;
                 }
             }
         }
+        private void PopulateFiles(SftpCachedDirectory directory, System.IO.StringReader reader)
+        {
+            while (true)
+            {
+                string line = reader.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(line))
+                    break;
+                if (line.StartsWith("total"))
+                    continue;
+                if (line.StartsWith("d"))
+                    continue;
+
+                // -rw-r--r-- 1 pi pi 11665 2016-10-27 22:38:12.000000000 +0200 securite-les-injections-sql.md
+                Match match = filePattern.Match(line);
+                if (!match.Success)
+                    continue;
+
+                string name = match.Groups["Name"].Value;
+                string size = match.Groups["Size"].Value;
+                string date = match.Groups["Date"].Value;
+
+                SftpCachedFile file = new SftpCachedFile(directory.Storage as SftpStorage, directory, directory.path + "/" + name, name, ulong.Parse(size), DateTime.Parse(date));
+                directory.files.Add(file);
+            }
+        }
+
         private static string Combine(string left, string right)
         {
             string path = System.IO.Path.Combine(left, right).Replace("\\", "/");
@@ -191,9 +213,26 @@ namespace SmartSync.Sftp
             return string.Join("/", parts);
         }
 
+        public override void EndSync()
+        {
+            if (!string.IsNullOrWhiteSpace(PostSync))
+            {
+                if (SshClient == null)
+                {
+                    Console.WriteLine("Could not run post sync script because no SSH session were created");
+                    return;
+                }
+
+                Console.WriteLine("Running post sync script");
+
+                SshCommand command = SshClient.RunCommand(PostSync);
+                Console.WriteLine(command.Result);
+            }
+        }
+
         public override string ToString()
         {
-            return string.Format("Sftp {{ Host: {0}, Port: {1} }}", Host, Port);
+            return string.Format("Sftp {{ Host: {0}, Port: {1}, Path: {2} }}", Host, Port, Path);
         }
     }
 }

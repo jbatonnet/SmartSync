@@ -6,8 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Bedrock.Common;
+
 namespace SmartSync.Common
 {
+    using File = Bedrock.Common.File;
+    using Directory = Bedrock.Common.Directory;
+
     public class ZipStorage : Storage
     {
         public Storage Storage { get; set; }
