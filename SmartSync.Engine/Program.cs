@@ -100,7 +100,7 @@ namespace SmartSync.Engine
                 differences = profile.GetDifferences().ToArray();
 
                 Log.Info("Computing actions to perform ...");
-                actions = differences.Select(d => d.GetAction(profile.SyncType)).Sort().ToArray();
+                actions = differences.Select(d => d.GetAction(profile.SyncType)).Where(a => a != null).Sort().ToArray();
 
                 Log.Info("");
             }

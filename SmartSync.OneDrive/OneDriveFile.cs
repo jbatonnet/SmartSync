@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using SmartSync.Common;
+using Bedrock.Common;
 
 using Microsoft.OneDrive.Sdk;
-using System.IO;
 
 namespace SmartSync.OneDrive
 {
-    public class OneDriveFile : Common.File
+    using File = Bedrock.Common.File;
+    using Directory = Bedrock.Common.Directory;
+
+    public class OneDriveFile : File
     {
         public override string Name
         {
@@ -24,7 +27,7 @@ namespace SmartSync.OneDrive
                 throw new NotImplementedException();
             }
         }
-        public override Common.Directory Parent
+        public override Directory Parent
         {
             get
             {

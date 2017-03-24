@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using SmartSync.Common;
+using Bedrock.Common;
 
 using Google.Apis.Drive.v2;
 

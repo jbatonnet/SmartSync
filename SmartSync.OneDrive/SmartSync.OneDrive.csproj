@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SmartSync.OneDrive</RootNamespace>
     <AssemblyName>SmartSync.OneDrive</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -321,15 +322,15 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmartSync.Common\SmartSync.Common.csproj">
-      <Project>{66fc3ca1-e596-4c66-a8ea-46169662b0ea}</Project>
-      <Name>SmartSync.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll">
       <Link>Extern\Newtonsoft.Json.dll</Link>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\External\Bedrock\Bedrock.Common\Bedrock.Common.csproj">
+      <Project>{1dd53bde-0d9c-43c4-ae48-3a669e55261a}</Project>
+      <Name>Bedrock.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="InjectModuleInitializer" AfterTargets="AfterBuild">

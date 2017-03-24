@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using SmartSync.Common;
+using Bedrock.Common;
 
 using Microsoft.OneDrive.Sdk;
 
 namespace SmartSync.OneDrive
 {
+    using File = Bedrock.Common.File;
+
     public class OneDriveDirectory : Directory
     {
         public override string Name
@@ -54,7 +56,7 @@ namespace SmartSync.OneDrive
                 }
             }
         }
-        public override IEnumerable<Common.File> Files
+        public override IEnumerable<File> Files
         {
             get
             {
@@ -107,7 +109,7 @@ namespace SmartSync.OneDrive
             task.Wait();
         }
 
-        public override Common.File CreateFile(string name)
+        public override File CreateFile(string name)
         {
             if (!Storage.IsNameValid(name))
                 throw new ArgumentException("The specified name contains invalid characters");
@@ -117,7 +119,7 @@ namespace SmartSync.OneDrive
 
             return new OneDriveFile(storage, this, task.Result);
         }
-        public override void DeleteFile(Common.File file)
+        public override void DeleteFile(File file)
         {
             if (!file.Parent.Equals(this))
                 throw new ArgumentException("The specified directory could not be found");

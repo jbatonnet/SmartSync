@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using SmartSync.Common;
-
 using Microsoft.OneDrive.Sdk;
 using Microsoft.OneDrive.Sdk.WindowsForms;
+
+using Bedrock.Common;
 using SmartSync.OneDrive.Properties;
-using Newtonsoft.Json;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SmartSync.OneDrive
 {
+    using File = Bedrock.Common.File;
+
     public class OneDriveInfoProvider : ServiceInfoProvider
     {
         public OneDriveInfoProvider() : base(new FormsWebAuthenticationUi()) { }
@@ -65,10 +65,23 @@ namespace SmartSync.OneDrive
                 credentialCache.InitializeCacheFromBlob(Convert.FromBase64String(Settings.Default.Credentials));
 
             // Authenticate with OneDrive
-            Client = OneDriveClient.GetMicrosoftAccountClient(applicationId, applicationReturnUrl, applicationScopes, applicationSecret, credentialCache, null, new OneDriveInfoProvider());
-            Task<AccountSession> oneDriveSessionTask = Client.AuthenticateAsync();
-            oneDriveSessionTask.Wait();
-            Session = oneDriveSessionTask.Result;
+            Func<CredentialCache, AccountSession> authenticate = cc =>
+            {
+                Client = OneDriveClient.GetMicrosoftAccountClient(applicationId, applicationReturnUrl, applicationScopes, applicationSecret, cc, null, new OneDriveInfoProvider());
+                Task<AccountSession> oneDriveSessionTask = Client.AuthenticateAsync();
+                oneDriveSessionTask.Wait();
+                return oneDriveSessionTask.Result;
+            };
+
+            try
+            {
+                Session = authenticate(credentialCache);
+            }
+            catch
+            {
+                credentialCache = new CredentialCache();
+                Session = authenticate(credentialCache);
+            }
 
             // Save credentials
             if (Session == null)
@@ -112,7 +125,7 @@ namespace SmartSync.OneDrive
 
             return new OneDriveDirectory(this, null, task.Result);
         }
-        public /*override*/ Common.File _GetFile(string path)
+        public /*override*/ File _GetFile(string path)
         {
             Initialize();
 

@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-using SmartSync.Common;
+using Bedrock.Common;
 using SmartSync.GoogleDrive.Properties;
 
 using Google.Apis.Auth.OAuth2;
