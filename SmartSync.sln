@@ -32,6 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{6E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bedrock.Common", "External\Bedrock\Bedrock.Common\Bedrock.Common.csproj", "{1DD53BDE-0D9C-43C4-AE48-3A669E55261A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.Desktop", "SmartSync.Desktop\SmartSync.Desktop.csproj", "{6F4F5E99-64C2-4BFD-BD65-628FF92E57E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{1DD53BDE-0D9C-43C4-AE48-3A669E55261A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1DD53BDE-0D9C-43C4-AE48-3A669E55261A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1DD53BDE-0D9C-43C4-AE48-3A669E55261A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F4F5E99-64C2-4BFD-BD65-628FF92E57E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F4F5E99-64C2-4BFD-BD65-628FF92E57E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F4F5E99-64C2-4BFD-BD65-628FF92E57E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F4F5E99-64C2-4BFD-BD65-628FF92E57E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

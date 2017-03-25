@@ -53,6 +53,7 @@
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -93,6 +94,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\External\Bedrock\Bedrock.Common\Bedrock.Common.csproj">
+      <Project>{1dd53bde-0d9c-43c4-ae48-3a669e55261a}</Project>
+      <Name>Bedrock.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SmartSync.Common\SmartSync.Common.csproj">
+      <Project>{66fc3ca1-e596-4c66-a8ea-46169662b0ea}</Project>
+      <Name>SmartSync.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
