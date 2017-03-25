@@ -327,7 +327,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\External\Bedrock\Bedrock.Common\Bedrock.Common.csproj">
+    <ProjectReference Include="..\[External]\Bedrock\Bedrock.Common\Bedrock.Common.csproj">
       <Project>{1dd53bde-0d9c-43c4-ae48-3a669e55261a}</Project>
       <Name>Bedrock.Common</Name>
     </ProjectReference>

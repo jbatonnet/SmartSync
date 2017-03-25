@@ -30,7 +30,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.Sftp", "SmartSync
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{6EC22DE0-9AA3-43D6-9BFE-76AE51E0D202}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bedrock.Common", "External\Bedrock\Bedrock.Common\Bedrock.Common.csproj", "{1DD53BDE-0D9C-43C4-AE48-3A669E55261A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bedrock.Common", "[External]\Bedrock\Bedrock.Common\Bedrock.Common.csproj", "{1DD53BDE-0D9C-43C4-AE48-3A669E55261A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync.Desktop", "SmartSync.Desktop\SmartSync.Desktop.csproj", "{6F4F5E99-64C2-4BFD-BD65-628FF92E57E4}"
 EndProject
